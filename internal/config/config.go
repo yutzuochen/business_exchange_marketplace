@@ -1,145 +1,83 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
-	"time"
 )
 
 type Config struct {
-	// Server Configuration
-	ServerHost string
-	ServerPort string
-	GinMode    string
+	AppName string
+	AppEnv  string
+	AppPort string
 
-	// Database Configuration
-	DBHost               string
-	DBPort               string
-	DBName               string
-	DBUser               string
-	DBPassword           string
-	DBMaxConnections     int
-	DBMaxIdleConnections int
+	DBHost          string
+	DBPort          string
+	DBUser          string
+	DBPassword      string
+	DBName          string
+	DBMaxIdleConns  int
+	DBMaxOpenConns  int
 
-	// Redis Configuration
-	RedisHost     string
-	RedisPort     string
-	RedisPassword string
-	RedisDB       int
+	RedisAddr              string
+	RedisPassword          string
+	RedisDB                int
+	RedisDefaultTTLSeconds int
 
-	// JWT Configuration
-	JWTSecret      string
-	JWTExpiryHours time.Duration
+	JWTSecret       string
+	JWTIssuer       string
+	JWTExpireMinutes int
 
-	// Email Configuration
-	SMTPHost     string
-	SMTPPort     int
-	SMTPUsername string
-	SMTPPassword string
-	FromEmail    string
-
-	// File Upload Configuration
-	UploadPath       string
-	MaxFileSize      int64
-	AllowedFileTypes []string
-
-	// Cache Configuration
-	CacheDefaultTTL time.Duration
-	CacheSearchTTL  time.Duration
-	CacheSessionTTL time.Duration
-
-	// Rate Limiting
-	RateLimitRequests int
-	RateLimitWindow   time.Duration
-
-	// Pagination
-	DefaultPageSize int
-	MaxPageSize     int
-
-	// Application Settings
-	AppName      string
-	AppURL       string
-	ContactEmail string
-
-	// Security
-	CSRFSecret    string
-	SessionSecret string
+	CORSAllowedOrigins string
+	CORSAllowedMethods string
+	CORSAllowedHeaders string
 }
 
-func Load() *Config {
-	return &Config{
-		// Server Configuration
-		ServerHost: getEnv("SERVER_HOST", "localhost"),
-		ServerPort: getEnv("SERVER_PORT", "8080"),
-		GinMode:    getEnv("GIN_MODE", "debug"),
+func Load() (*Config, error) {
+	cfg := &Config{}
+	cfg.AppName = getEnv("APP_NAME", "trade_company")
+	cfg.AppEnv = getEnv("APP_ENV", "development")
+	cfg.AppPort = getEnv("APP_PORT", "8080")
 
-		// Database Configuration
-		DBHost:               getEnv("DB_HOST", "localhost"),
-		DBPort:               getEnv("DB_PORT", "3306"),
-		DBName:               getEnv("DB_NAME", "business_marketplace"),
-		DBUser:               getEnv("DB_USER", "root"),
-		DBPassword:           getEnv("DB_PASSWORD", ""),
-		DBMaxConnections:     getEnvAsInt("DB_MAX_CONNECTIONS", 20),
-		DBMaxIdleConnections: getEnvAsInt("DB_MAX_IDLE_CONNECTIONS", 10),
+	cfg.DBHost = getEnv("DB_HOST", "localhost")
+	cfg.DBPort = getEnv("DB_PORT", "3306")
+	cfg.DBUser = getEnv("DB_USER", "app")
+	cfg.DBPassword = getEnv("DB_PASSWORD", "app_password")
+	cfg.DBName = getEnv("DB_NAME", "trade_company")
+	cfg.DBMaxIdleConns = getEnvInt("DB_MAX_IDLE_CONNS", 10)
+	cfg.DBMaxOpenConns = getEnvInt("DB_MAX_OPEN_CONNS", 50)
 
-		// Redis Configuration
-		RedisHost:     getEnv("REDIS_HOST", "localhost"),
-		RedisPort:     getEnv("REDIS_PORT", "6379"),
-		RedisPassword: getEnv("REDIS_PASSWORD", ""),
-		RedisDB:       getEnvAsInt("REDIS_DB", 0),
+	cfg.RedisAddr = getEnv("REDIS_ADDR", "localhost:6379")
+	cfg.RedisPassword = getEnv("REDIS_PASSWORD", "")
+	cfg.RedisDB = getEnvInt("REDIS_DB", 0)
+	cfg.RedisDefaultTTLSeconds = getEnvInt("REDIS_DEFAULT_TTL_SECONDS", 60)
 
-		// JWT Configuration
-		JWTSecret:      getEnv("JWT_SECRET", "your-secret-key-change-this"),
-		JWTExpiryHours: time.Duration(getEnvAsInt("JWT_EXPIRY_HOURS", 24)) * time.Hour,
+	cfg.JWTSecret = getEnv("JWT_SECRET", "changeme-super-secret")
+	cfg.JWTIssuer = getEnv("JWT_ISSUER", "trade_company")
+	cfg.JWTExpireMinutes = getEnvInt("JWT_EXPIRE_MINUTES", 60)
 
-		// Email Configuration
-		SMTPHost:     getEnv("SMTP_HOST", "smtp.gmail.com"),
-		SMTPPort:     getEnvAsInt("SMTP_PORT", 587),
-		SMTPUsername: getEnv("SMTP_USERNAME", ""),
-		SMTPPassword: getEnv("SMTP_PASSWORD", ""),
-		FromEmail:    getEnv("FROM_EMAIL", "noreply@businessmarketplace.com"),
+	cfg.CORSAllowedOrigins = getEnv("CORS_ALLOWED_ORIGINS", "*")
+	cfg.CORSAllowedMethods = getEnv("CORS_ALLOWED_METHODS", "GET,POST,PUT,PATCH,DELETE,OPTIONS")
+	cfg.CORSAllowedHeaders = getEnv("CORS_ALLOWED_HEADERS", "Origin,Content-Type,Accept,Authorization")
+	return cfg, nil
+}
 
-		// File Upload Configuration
-		UploadPath:       getEnv("UPLOAD_PATH", "./uploads"),
-		MaxFileSize:      int64(getEnvAsInt("MAX_FILE_SIZE", 10485760)), // 10MB
-		AllowedFileTypes: []string{"jpg", "jpeg", "png", "gif", "pdf"},
+func (c *Config) MySQLDSN() string {
+	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true&charset=utf8mb4&loc=Local", c.DBUser, c.DBPassword, c.DBHost, c.DBPort, c.DBName)
+}
 
-		// Cache Configuration
-		CacheDefaultTTL: time.Duration(getEnvAsInt("CACHE_DEFAULT_TTL", 300)) * time.Second,
-		CacheSearchTTL:  time.Duration(getEnvAsInt("CACHE_SEARCH_TTL", 300)) * time.Second,
-		CacheSessionTTL: time.Duration(getEnvAsInt("CACHE_SESSION_TTL", 1800)) * time.Second,
-
-		// Rate Limiting
-		RateLimitRequests: getEnvAsInt("RATE_LIMIT_REQUESTS", 100),
-		RateLimitWindow:   time.Duration(getEnvAsInt("RATE_LIMIT_WINDOW", 60)) * time.Second,
-
-		// Pagination
-		DefaultPageSize: getEnvAsInt("DEFAULT_PAGE_SIZE", 20),
-		MaxPageSize:     getEnvAsInt("MAX_PAGE_SIZE", 100),
-
-		// Application Settings
-		AppName:      getEnv("APP_NAME", "Business Marketplace"),
-		AppURL:       getEnv("APP_URL", "http://localhost:8080"),
-		ContactEmail: getEnv("CONTACT_EMAIL", "support@businessmarketplace.com"),
-
-		// Security
-		CSRFSecret:    getEnv("CSRF_SECRET", "your-csrf-secret"),
-		SessionSecret: getEnv("SESSION_SECRET", "your-session-secret"),
+func getEnv(key, def string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
 	}
+	return def
 }
 
-func getEnv(key, defaultVal string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return defaultVal
-}
-
-func getEnvAsInt(key string, defaultVal int) int {
-	if value := os.Getenv(key); value != "" {
-		if intVal, err := strconv.Atoi(value); err == nil {
-			return intVal
+func getEnvInt(key string, def int) int {
+	if v := os.Getenv(key); v != "" {
+		if i, err := strconv.Atoi(v); err == nil {
+			return i
 		}
 	}
-	return defaultVal
-}
+	return def
+} 

@@ -1,0 +1,17 @@
+你是資深後端工程師與架構師，請為我產生「類 BizBuySell」網站專案腳手架，技術棧：
+- Backend: Go 1.22, Gin, GORM, MySQL 8、Redis、JWT、Zap log、Wire DI
+- API: REST + GraphQL（gqlgen）
+- Frontend: Go template + Tailwind(CDN)
+- Infra: Docker Compose（mysql、redis、app、adminer）、Makefile
+- 部署目標：可於 GCP（Cloud Run + Cloud SQL + Memorystore）上運行
+- 功能：註冊/登入/刊登/搜尋/收藏/訊息（REST 與 GraphQL 皆可用）
+
+請產出：
+1) 專案目錄樹（/cmd,/internal,/pkg）與 go.mod
+2) `.env.example`、Docker Compose（含 MySQL 與 Redis 初始化）、Makefile
+3) 資料模型與遷移（users、listings、images、favorites、messages、transactions）
+4) REST API 與 GraphQL Schema 雛形
+5) Redis 快取模組（listings 搜尋結果快取、TTL、快取失效策略）
+6) main.go 啟動流程、Auto-migrate、中介層（JWT、Request ID、錯誤統一）、CORS、recover
+7) 頁面：首頁、註冊、登入、Dashboard（Go template + Tailwind CDN）
+8) README：本機啟動步驟、驗收清單

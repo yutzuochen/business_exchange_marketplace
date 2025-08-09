@@ -1,122 +1,115 @@
 package router
 
 import (
-	"business-marketplace/internal/config"
-	"business-marketplace/internal/handlers"
-	"business-marketplace/internal/middleware"
-	"database/sql"
+	"net/http"
+	"strings"
+	"time"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/gzip"
+	"trade_company/graph"
+	"trade_company/internal/config"
+	gqlctx "trade_company/internal/graphql"
+	"trade_company/internal/handlers"
+	"trade_company/internal/middleware"
+
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
-	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
-// Initialize sets up the router with all routes and middleware
-func Initialize(cfg *config.Config, db *sql.DB, redisClient *redis.Client, logger *logrus.Logger) *gin.Engine {
+func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, _ *redis.Client) http.Handler {
+	if cfg.AppEnv == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
+	}
 	r := gin.New()
-
-	// Middleware
-	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	r.Use(gzip.Gzip(gzip.DefaultCompression))
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"}, // Configure properly for production
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"*"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-	}))
+	r.Use(requestLogger(log))
+	r.Use(middleware.RequestID())
+	r.Use(corsMiddleware(cfg))
 
-	// Custom middleware
-	r.Use(middleware.Logger(logger))
-	r.Use(middleware.RateLimit(cfg))
+	// health
+	r.GET("/healthz", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"status": "ok"}) })
 
-	// Initialize handlers
-	h := handlers.New(cfg, db, redisClient, logger)
-
-	// Serve static files
-	r.Static("/static", "./static")
-	r.Static("/uploads", cfg.UploadPath)
-
-	// Load HTML templates
-	r.LoadHTMLGlob("templates/**/*")
-
-	// Health check
-	r.GET("/health", h.HealthCheck)
-
-	// Public routes
-	public := r.Group("/")
-	{
-		public.GET("/", h.Home)
-		public.GET("/search", h.Search)
-		public.GET("/listing/:slug", h.ListingDetail)
-		public.GET("/category/:slug", h.CategoryListings)
-	}
-
-	// Auth routes
-	auth := r.Group("/auth")
-	{
-		auth.GET("/login", h.LoginPage)
-		auth.POST("/login", h.Login)
-		auth.GET("/register", h.RegisterPage)
-		auth.POST("/register", h.Register)
-		auth.POST("/logout", h.Logout)
-		auth.GET("/verify-email/:token", h.VerifyEmail)
-		auth.GET("/forgot-password", h.ForgotPasswordPage)
-		auth.POST("/forgot-password", h.ForgotPassword)
-		auth.GET("/reset-password/:token", h.ResetPasswordPage)
-		auth.POST("/reset-password/:token", h.ResetPassword)
-	}
-
-	// Protected routes
-	protected := r.Group("/")
-	protected.Use(middleware.AuthRequired(cfg, redisClient))
-	{
-		protected.GET("/dashboard", h.Dashboard)
-		protected.GET("/profile", h.Profile)
-		protected.POST("/profile", h.UpdateProfile)
-
-		// Listing management
-		protected.GET("/listings/create", h.CreateListingPage)
-		protected.POST("/listings/create", h.CreateListing)
-		protected.GET("/listings/:id/edit", h.EditListingPage)
-		protected.POST("/listings/:id/edit", h.UpdateListing)
-		protected.DELETE("/listings/:id", h.DeleteListing)
-		protected.GET("/my-listings", h.MyListings)
-
-		// Favorites
-		protected.POST("/favorites/:id", h.AddToFavorites)
-		protected.DELETE("/favorites/:id", h.RemoveFromFavorites)
-		protected.GET("/favorites", h.MyFavorites)
-
-		// Inquiries
-		protected.POST("/inquiries", h.SendInquiry)
-		protected.GET("/inquiries", h.MyInquiries)
-		protected.GET("/inquiries/:id", h.InquiryDetail)
-		protected.POST("/inquiries/:id/reply", h.ReplyToInquiry)
-	}
-
-	// API routes
+	// REST API v1
+	authH := &handlers.AuthHandler{DB: db, Cfg: cfg}
+	listH := &handlers.ListingsHandler{DB: db}
 	api := r.Group("/api/v1")
 	{
-		// Public API
-		api.GET("/listings", h.APIListings)
-		api.GET("/listings/:id", h.APIListingDetail)
-		api.GET("/categories", h.APICategories)
-		api.GET("/search", h.APISearch)
+		api.POST("/auth/register", authH.Register)
+		api.POST("/auth/login", authH.Login)
 
-		// Protected API
-		apiProtected := api.Group("/")
-		apiProtected.Use(middleware.AuthRequired(cfg, redisClient))
-		{
-			apiProtected.POST("/listings", h.APICreateListing)
-			apiProtected.PUT("/listings/:id", h.APIUpdateListing)
-			apiProtected.DELETE("/listings/:id", h.APIDeleteListing)
-			apiProtected.POST("/upload", h.APIUploadImage)
-		}
+		api.GET("/listings", listH.List)
+		api.GET("/listings/:id", listH.Get)
+		authd := api.Group("")
+		authd.Use(middleware.JWTAuth(cfg))
+		authd.POST("/listings", listH.Create)
 	}
 
+	// GraphQL
+	es := graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{DB: db, Cfg: cfg}})
+	gh := handler.NewDefaultServer(es)
+
+	graphqlGroup := r.Group("")
+	graphqlGroup.Use(func(c *gin.Context) {
+		// enrich request context with userID if token provided
+		ctx := gqlctx.ExtractUserFromAuthHeader(cfg, c.Request.Context(), c.GetHeader("Authorization"))
+		c.Request = c.Request.WithContext(ctx)
+		c.Next()
+	})
+	graphqlGroup.POST("/graphql", gin.WrapH(gh))
+	r.GET("/playground", gin.WrapH(playground.Handler("GraphQL", "/graphql")))
+
 	return r
+}
+
+func requestLogger(log *zap.Logger) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		start := time.Now()
+		c.Next()
+		dur := time.Since(start)
+		log.Info("request",
+			zap.String("method", c.Request.Method),
+			zap.String("path", c.Request.URL.Path),
+			zap.Int("status", c.Writer.Status()),
+			zap.Duration("duration", dur),
+		)
+	}
+}
+
+func corsMiddleware(cfg *config.Config) gin.HandlerFunc {
+	allowedOrigins := strings.Split(cfg.CORSAllowedOrigins, ",")
+	allowedMethods := cfg.CORSAllowedMethods
+	allowedHeaders := cfg.CORSAllowedHeaders
+
+	return func(c *gin.Context) {
+		origin := c.GetHeader("Origin")
+		if origin != "" && (cfg.CORSAllowedOrigins == "*" || contains(allowedOrigins, origin)) {
+			c.Header("Access-Control-Allow-Origin", origin)
+			c.Header("Vary", "Origin")
+		} else if cfg.CORSAllowedOrigins == "*" {
+			c.Header("Access-Control-Allow-Origin", "*")
+		}
+		c.Header("Access-Control-Allow-Methods", allowedMethods)
+		c.Header("Access-Control-Allow-Headers", allowedHeaders)
+		c.Header("Access-Control-Allow-Credentials", "true")
+
+		if c.Request.Method == http.MethodOptions {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
+		c.Next()
+	}
+}
+
+func contains(values []string, target string) bool {
+	for _, v := range values {
+		if strings.TrimSpace(v) == target {
+			return true
+		}
+	}
+	return false
 }

@@ -1,0 +1,40 @@
+type User {
+  id: ID!
+  email: String!
+  createdAt: String
+  updatedAt: String
+}
+
+type Listing {
+  id: ID!
+  title: String!
+  description: String
+  priceUSD: Int!
+  location: String
+  ownerID: ID!
+  createdAt: String
+  updatedAt: String
+}
+
+type AuthPayload {
+  token: String!
+}
+
+input CreateListingInput {
+  title: String!
+  description: String
+  priceUSD: Int!
+  location: String
+}
+
+type Query {
+  me: User
+  listings(limit: Int = 50): [Listing!]!
+  listing(id: ID!): Listing
+}
+
+type Mutation {
+  register(email: String!, password: String!): AuthPayload!
+  login(email: String!, password: String!): AuthPayload!
+  createListing(input: CreateListingInput!): Listing!
+}

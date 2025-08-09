@@ -1,43 +1,45 @@
 package database
 
 import (
-	"business-marketplace/internal/config"
-	"database/sql"
-	"fmt"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
+	"trade_company/internal/config"
+	"trade_company/internal/models"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
-// Initialize creates and configures a MySQL database connection
-func Initialize(cfg *config.Config) (*sql.DB, error) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		cfg.DBUser,
-		cfg.DBPassword,
-		cfg.DBHost,
-		cfg.DBPort,
-		cfg.DBName,
-	)
-
-	db, err := sql.Open("mysql", dsn)
+func Connect(cfg *config.Config, _ any) (*gorm.DB, error) {
+	logMode := logger.Info
+	if cfg.AppEnv == "production" {
+		logMode = logger.Warn
+	}
+	db, err := gorm.Open(mysql.Open(cfg.MySQLDSN()), &gorm.Config{
+		PrepareStmt: true,
+		Logger:      logger.Default.LogMode(logMode),
+	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to open database connection: %w", err)
+		return nil, err
 	}
-
-	// Configure connection pool
-	db.SetMaxOpenConns(cfg.DBMaxConnections)
-	db.SetMaxIdleConns(cfg.DBMaxIdleConnections)
-	db.SetConnMaxLifetime(time.Hour)
-
-	// Test the connection
-	if err := db.Ping(); err != nil {
-		return nil, fmt.Errorf("failed to ping database: %w", err)
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, err
 	}
-
+	sqlDB.SetMaxIdleConns(cfg.DBMaxIdleConns)
+	sqlDB.SetMaxOpenConns(cfg.DBMaxOpenConns)
+	sqlDB.SetConnMaxLifetime(60 * time.Minute)
 	return db, nil
 }
 
-// HealthCheck performs a simple health check on the database
-func HealthCheck(db *sql.DB) error {
-	return db.Ping()
+func AutoMigrate(db *gorm.DB) error {
+	return db.AutoMigrate(
+		&models.User{},
+		&models.Listing{},
+		&models.Image{},
+		&models.Favorite{},
+		&models.Message{},
+		&models.Transaction{},
+	)
 }

@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Login - trade_company</title>
+</head>
+<body class="bg-gray-50">
+  <div class="max-w-md mx-auto mt-20 bg-white p-8 shadow">
+    <h1 class="text-2xl font-bold mb-6">Login</h1>
+    <form id="loginForm" class="space-y-4">
+      <input class="w-full border p-2" placeholder="Email" type="email" id="email" />
+      <input class="w-full border p-2" placeholder="Password" type="password" id="password" />
+      <button class="w-full bg-blue-600 text-white p-2">Login</button>
+    </form>
+    <pre id="out" class="mt-4 text-sm"></pre>
+  </div>
+  <script>
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const res = await fetch('/api/v1/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email,password}) });
+    document.getElementById('out').textContent = await res.text();
+  });
+  </script>
+</body>
+</html>

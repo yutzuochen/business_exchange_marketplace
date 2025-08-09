@@ -1,67 +1,63 @@
-version: '3.8'
-
+version: "3.9"
 services:
-  app:
-    build: .
-    ports:
-      - "8080:8080"
-    depends_on:
-      - mysql
-      - redis
-    environment:
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_USER=root
-      - DB_PASSWORD=password
-      - DB_NAME=business_marketplace
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    volumes:
-      - ./:/app
-      - ./uploads:/app/uploads
-    networks:
-      - business_network
-
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: business_marketplace
-      MYSQL_USER: app_user
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: trade_company
+      MYSQL_USER: app
       MYSQL_PASSWORD: app_password
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./database_schema.sql:/docker-entrypoint-initdb.d/init.sql
-    command: --default-authentication-plugin=mysql_native_password
-    networks:
-      - business_network
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - business_network
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  app:
+    build: .
     depends_on:
-      - app
-    networks:
-      - business_network
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      APP_ENV: development
+      APP_PORT: 8080
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: app
+      DB_PASSWORD: app_password
+      DB_NAME: trade_company
+      REDIS_ADDR: redis:6379
+      REDIS_DB: 0
+      REDIS_PASSWORD: ""
+      JWT_SECRET: changeme-super-secret
+      JWT_ISSUER: trade_company
+      JWT_EXPIRE_MINUTES: 60
+    ports:
+      - "8080:8080"
+
+  adminer:
+    image: adminer:4
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysql
 
 volumes:
-  mysql_data:
-  redis_data:
-
-networks:
-  business_network:
-    driver: bridge 
+  db_data: 
