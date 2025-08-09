@@ -10,6 +10,7 @@ import (
 	gqlctx "trade_company/internal/graphql"
 	"trade_company/internal/handlers"
 	"trade_company/internal/middleware"
+	"trade_company/internal/models"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -35,7 +36,13 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, _ *redis.Client
 	r.LoadHTMLGlob("templates/*.html")
 
 	// pages
-	r.GET("/", func(c *gin.Context) { c.HTML(http.StatusOK, "index.html", nil) })
+	r.GET("/", func(c *gin.Context) {
+		var txs []models.Transaction
+		_ = db.Order("created_at desc").Limit(10).Find(&txs).Error
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"transactions": txs, // this sends the data to the template
+		})
+	})
 	r.GET("/login", func(c *gin.Context) { c.HTML(http.StatusOK, "login.html", nil) })
 	r.GET("/register", func(c *gin.Context) { c.HTML(http.StatusOK, "register.html", nil) })
 	r.GET("/dashboard", func(c *gin.Context) { c.HTML(http.StatusOK, "dashboard.html", nil) })
