@@ -1,0 +1,17 @@
+* Rebuild and restart only the app
+docker compose up -d --build app
+docker compose logs -f app
+
+* Show recent app logs
+docker compose logs app --tail 100
+
+* All services (app, mysql, redis, adminer)
+docker compose logs --tail 50
+docker compose logs -f
+
+* mutation { login(email:"a@b.com", password:"password123") { token } }
+
+Use the bundled Adminer at http://localhost:8081 (Server: mysql, User: app, Password: app_password, DB: trade_company) or run one-shot SQL:
+```
+```
+```

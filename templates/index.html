@@ -8,5 +8,18 @@
   <body>
     <h1>trade_company</h1>
     <p>Service is running.</p>
+
+    <h2>Recent Transactions</h2>
+    {{ if .transactions }}
+      <ul>
+        {{ range .transactions }}
+          <li>
+            Txn #{{ .ID }} — Listing {{ .ListingID }} — ${{ .AmountUSD }} — {{ .Status }} — {{ .CreatedAt }}
+          </li>
+        {{ end }}
+      </ul>
+    {{ else }}
+      <p>No recent transactions.</p>
+    {{ end }}
   </body>
 </html>

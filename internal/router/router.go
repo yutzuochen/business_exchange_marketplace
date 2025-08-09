@@ -31,6 +31,15 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, _ *redis.Client
 	r.Use(middleware.RequestID())
 	r.Use(corsMiddleware(cfg))
 
+	// load templates
+	r.LoadHTMLGlob("templates/*.html")
+
+	// pages
+	r.GET("/", func(c *gin.Context) { c.HTML(http.StatusOK, "index.html", nil) })
+	r.GET("/login", func(c *gin.Context) { c.HTML(http.StatusOK, "login.html", nil) })
+	r.GET("/register", func(c *gin.Context) { c.HTML(http.StatusOK, "register.html", nil) })
+	r.GET("/dashboard", func(c *gin.Context) { c.HTML(http.StatusOK, "dashboard.html", nil) })
+
 	// health
 	r.GET("/healthz", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"status": "ok"}) })
 
