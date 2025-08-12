@@ -11,21 +11,21 @@ type Config struct {
 	AppEnv  string
 	AppPort string
 
-	DBHost          string
-	DBPort          string
-	DBUser          string
-	DBPassword      string
-	DBName          string
-	DBMaxIdleConns  int
-	DBMaxOpenConns  int
+	DBHost         string
+	DBPort         string
+	DBUser         string
+	DBPassword     string
+	DBName         string
+	DBMaxIdleConns int
+	DBMaxOpenConns int
 
 	RedisAddr              string
 	RedisPassword          string
 	RedisDB                int
 	RedisDefaultTTLSeconds int
 
-	JWTSecret       string
-	JWTIssuer       string
+	JWTSecret        string
+	JWTIssuer        string
 	JWTExpireMinutes int
 
 	CORSAllowedOrigins string
@@ -47,7 +47,8 @@ func Load() (*Config, error) {
 	cfg.DBMaxIdleConns = getEnvInt("DB_MAX_IDLE_CONNS", 10)
 	cfg.DBMaxOpenConns = getEnvInt("DB_MAX_OPEN_CONNS", 50)
 
-	cfg.RedisAddr = getEnv("REDIS_ADDR", "localhost:6379")
+	// empty by default so Redis is optional in environments without it
+	cfg.RedisAddr = getEnv("REDIS_ADDR", "")
 	cfg.RedisPassword = getEnv("REDIS_PASSWORD", "")
 	cfg.RedisDB = getEnvInt("REDIS_DB", 0)
 	cfg.RedisDefaultTTLSeconds = getEnvInt("REDIS_DEFAULT_TTL_SECONDS", 60)
@@ -80,4 +81,4 @@ func getEnvInt(key string, def int) int {
 		}
 	}
 	return def
-} 
+}

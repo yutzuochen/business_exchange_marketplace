@@ -3,6 +3,7 @@ $REGION="us-central1"
 $REPO="trade-repo"
 $IMAGE="trade_company"
 $TAG=$(git rev-parse --short HEAD)
+$REGISTRY="${REGION}-docker.pkg.dev"
 
 # Cloud SQL (MySQL, private IP)
 gcloud sql instances create trade-sql --database-version=MYSQL_8_0 --region=$REGION --cpu=1 --memory=4GiB --network=default --no-assign-ip
@@ -27,9 +28,10 @@ gcloud run deploy trade-company `
 
 # Artifact Registry + build/push
 gcloud artifacts repositories create $REPO --repository-format=docker --location=$REGION --quiet
-gcloud auth configure-docker "$REGION-docker.pkg.dev"
+$REGISTRY="${REGION}-docker.pkg.dev"
+gcloud auth configure-docker $REGISTRY
 
-docker build -t "$REGION-docker.pkg.dev/$PROJECT/$REPO/$IMAGE:$TAG" .
-docker push "$REGION-docker.pkg.dev/$PROJECT/$REPO/$IMAGE:$TAG"
+docker build -t "${REGISTRY}/${PROJECT}/${REPO}/${IMAGE}:${TAG}" .
+docker push "${REGISTRY}/${PROJECT}/${REPO}/${IMAGE}:${TAG}"
 
 

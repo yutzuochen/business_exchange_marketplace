@@ -17,6 +17,8 @@ import (
 	"trade_company/internal/models"
 	"trade_company/internal/redisclient"
 	"trade_company/internal/router"
+
+	redis "github.com/redis/go-redis/v9"
 )
 
 func main() {
@@ -39,13 +41,18 @@ func main() {
 		zapLogger.Fatal("db automigrate", logger.Err(err))
 	}
 
-	redis, err := redisclient.Connect(cfg)
-	if err != nil {
-		zapLogger.Fatal("redis connect", logger.Err(err))
+	var redisClient *redis.Client
+	if cfg.RedisAddr != "" {
+		r, rerr := redisclient.Connect(cfg)
+		if rerr != nil {
+			zapLogger.Warn("redis connect failed; continuing without redis", logger.Err(rerr))
+		} else {
+			defer r.Close()
+			redisClient = r
+		}
 	}
-	defer redis.Close()
 
-	engine := router.NewRouter(cfg, zapLogger, db, redis)
+	engine := router.NewRouter(cfg, zapLogger, db, redisClient)
 
 	srv := &http.Server{
 		Addr:              ":" + cfg.AppPort,
@@ -72,4 +79,4 @@ func main() {
 	zapLogger.Info("server exited")
 
 	_ = models.ErrPlaceholder // avoid unused import if models only used in migration
-} 
+}

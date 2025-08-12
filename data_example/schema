@@ -1,0 +1,80 @@
+-- users
+CREATE TABLE IF NOT EXISTS users (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role VARCHAR(32) NOT NULL DEFAULT 'user',
+  created_at DATETIME(3),
+  updated_at DATETIME(3)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- listings
+CREATE TABLE IF NOT EXISTS listings (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  price_usd BIGINT NOT NULL,
+  location VARCHAR(255),
+  owner_id BIGINT UNSIGNED NOT NULL,
+  created_at DATETIME(3),
+  updated_at DATETIME(3),
+  INDEX idx_listings_owner_id (owner_id),
+  CONSTRAINT fk_listings_owner FOREIGN KEY (owner_id) REFERENCES users(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- images
+CREATE TABLE IF NOT EXISTS images (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  listing_id BIGINT UNSIGNED NOT NULL,
+  url VARCHAR(512) NOT NULL,
+  created_at DATETIME(3),
+  INDEX idx_images_listing_id (listing_id),
+  CONSTRAINT fk_images_listing FOREIGN KEY (listing_id) REFERENCES listings(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- favorites
+CREATE TABLE IF NOT EXISTS favorites (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  listing_id BIGINT UNSIGNED NOT NULL,
+  created_at DATETIME(3),
+  UNIQUE KEY uniq_user_listing (user_id, listing_id),
+  INDEX idx_fav_user (user_id),
+  INDEX idx_fav_listing (listing_id),
+  CONSTRAINT fk_fav_user FOREIGN KEY (user_id) REFERENCES users(id),
+  CONSTRAINT fk_fav_listing FOREIGN KEY (listing_id) REFERENCES listings(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- messages
+CREATE TABLE IF NOT EXISTS messages (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  from_user_id BIGINT UNSIGNED NOT NULL,
+  to_user_id BIGINT UNSIGNED NOT NULL,
+  listing_id BIGINT UNSIGNED,
+  body TEXT NOT NULL,
+  created_at DATETIME(3),
+  INDEX idx_msg_from (from_user_id),
+  INDEX idx_msg_to (to_user_id),
+  INDEX idx_msg_listing (listing_id),
+  CONSTRAINT fk_msg_from FOREIGN KEY (from_user_id) REFERENCES users(id),
+  CONSTRAINT fk_msg_to FOREIGN KEY (to_user_id) REFERENCES users(id),
+  CONSTRAINT fk_msg_listing FOREIGN KEY (listing_id) REFERENCES listings(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- transactions
+CREATE TABLE IF NOT EXISTS transactions (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  buyer_id BIGINT UNSIGNED NOT NULL,
+  seller_id BIGINT UNSIGNED NOT NULL,
+  listing_id BIGINT UNSIGNED NOT NULL,
+  amount_usd BIGINT NOT NULL,
+  status VARCHAR(32) NOT NULL,
+  created_at DATETIME(3),
+  updated_at DATETIME(3),
+  INDEX idx_tx_buyer (buyer_id),
+  INDEX idx_tx_seller (seller_id),
+  INDEX idx_tx_listing (listing_id),
+  CONSTRAINT fk_tx_buyer FOREIGN KEY (buyer_id) REFERENCES users(id),
+  CONSTRAINT fk_tx_seller FOREIGN KEY (seller_id) REFERENCES users(id),
+  CONSTRAINT fk_tx_listing FOREIGN KEY (listing_id) REFERENCES listings(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
