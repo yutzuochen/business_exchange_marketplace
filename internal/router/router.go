@@ -12,6 +12,8 @@ import (
 	"trade_company/internal/middleware"
 	"trade_company/internal/models"
 
+	"strconv"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-gonic/gin"
@@ -39,8 +41,56 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, _ *redis.Client
 	r.GET("/", func(c *gin.Context) {
 		var txs []models.Transaction
 		_ = db.Order("created_at desc").Limit(10).Find(&txs).Error
+
+		var listings []models.Listing
+		_ = db.Order("id desc").Limit(8).Find(&listings).Error
+
 		c.HTML(http.StatusOK, "index.html", gin.H{
-			"transactions": txs, // this sends the data to the template
+			"transactions": txs,
+			"listings":     listings,
+		})
+	})
+	r.GET("/market", func(c *gin.Context) {
+		var txs []models.Transaction
+		_ = db.Order("created_at desc").Limit(10).Find(&txs).Error
+
+		var listings []models.Listing
+		_ = db.Order("id desc").Limit(8).Find(&listings).Error
+
+		c.HTML(http.StatusOK, "market_home.html", gin.H{
+			"transactions": txs,
+			"listings":     listings,
+		})
+	})
+
+	// search listing by title and redirect to detail page if found
+	r.GET("/market/search", func(c *gin.Context) {
+		q := c.Query("q")
+		if q == "" {
+			c.Redirect(http.StatusFound, "/market")
+			return
+		}
+		var ls models.Listing
+		if err := db.Where("title LIKE ?", "%"+q+"%").Order("id desc").First(&ls).Error; err != nil {
+			c.Redirect(http.StatusFound, "/market")
+			return
+		}
+		c.Redirect(http.StatusFound, "/market/listings/"+strconv.FormatUint(uint64(ls.ID), 10))
+	})
+
+	// listing detail page
+	r.GET("/market/listings/:id", func(c *gin.Context) {
+		idStr := c.Param("id")
+		var ls models.Listing
+		if err := db.First(&ls, idStr).Error; err != nil {
+			c.String(http.StatusNotFound, "listing not found")
+			return
+		}
+		var images []models.Image
+		_ = db.Where("listing_id = ?", ls.ID).Order("id asc").Find(&images).Error
+		c.HTML(http.StatusOK, "market_listing.html", gin.H{
+			"listing": ls,
+			"images":  images,
 		})
 	})
 	r.GET("/login", func(c *gin.Context) { c.HTML(http.StatusOK, "login.html", nil) })
