@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -22,6 +23,7 @@ import (
 )
 
 func main() {
+	fmt.Println("========= lets start =================")
 	_ = godotenv.Load()
 
 	cfg, err := config.Load()
@@ -59,6 +61,7 @@ func main() {
 		Handler:           engine,
 		ReadHeaderTimeout: 20 * time.Second,
 	}
+	fmt.Printf("srv: %+v\n", srv)
 
 	go func() {
 		zapLogger.Sugar().Infow("server starting", "addr", srv.Addr)

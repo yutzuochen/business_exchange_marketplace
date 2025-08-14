@@ -5,8 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Marketplace - trade_company</title>
+    <style>
+      .brand-badge{position:fixed;top:12px;left:12px;z-index:1000}
+      .brand-num{font:700 52px/1.1 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#f97316;text-shadow:0 2px 0 #0000001a,0 0 2px #0000001a}
+      .brand-tag{font:600 26px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#f59e0b;margin-left:6px}
+      .brand-sub{font:700 16px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#111;margin-top:4px}
+      @media (max-width:480px){.brand-num{font-size:40px}.brand-tag{font-size:20px}.brand-sub{font-size:14px}}
+    </style>
   </head>
   <body class="bg-gray-50">
+    <div class="brand-badge">
+      <div><span class="brand-num">567</span><span class="brand-tag">我來接</span></div>
+      <div class="brand-sub">企業互惠平台</div>
+    </div>
     <!-- Top navigation -->
     <header class="bg-white border-b">
       <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -73,39 +84,7 @@
       </section>
 
       <!-- Recent Transactions -->
-      <section>
-        <h2 class="text-xl font-semibold mb-4">最新交易</h2>
-        {{ if .transactions }}
-          <div class="bg-white rounded-lg shadow overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">交易編號</th>
-                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">刊登</th>
-                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">金額</th>
-                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">狀態</th>
-                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">時間</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-100">
-                {{ range .transactions }}
-                  <tr class="hover:bg-gray-50">
-                    <td class="px-4 py-2 font-medium">#{{ .ID }}</td>
-                    <td class="px-4 py-2">{{ .ListingID }}</td>
-                    <td class="px-4 py-2">${{ .AmountUSD }}</td>
-                    <td class="px-4 py-2">
-                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700">{{ .Status }}</span>
-                    </td>
-                    <td class="px-4 py-2 text-sm text-gray-600">{{ .CreatedAt }}</td>
-                  </tr>
-                {{ end }}
-              </tbody>
-            </table>
-          </div>
-        {{ else }}
-          <div class="text-gray-600">尚無交易紀錄。</div>
-        {{ end }}
-      </section>
+      
     </main>
 
     <footer class="border-t mt-12">
