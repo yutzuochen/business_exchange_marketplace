@@ -57,7 +57,7 @@ func main() {
 	srv := &http.Server{
 		Addr:              ":" + cfg.AppPort,
 		Handler:           engine,
-		ReadHeaderTimeout: 10 * time.Second,
+		ReadHeaderTimeout: 20 * time.Second,
 	}
 
 	go func() {

@@ -43,7 +43,7 @@ func Load() (*Config, error) {
 	cfg.DBPort = getEnv("DB_PORT", "3306")
 	cfg.DBUser = getEnv("DB_USER", "app")
 	cfg.DBPassword = getEnv("DB_PASSWORD", "app_password")
-	cfg.DBName = getEnv("DB_NAME", "trade_company")
+	cfg.DBName = getEnv("DB_NAME", "business_exchange")
 	cfg.DBMaxIdleConns = getEnvInt("DB_MAX_IDLE_CONNS", 10)
 	cfg.DBMaxOpenConns = getEnvInt("DB_MAX_OPEN_CONNS", 50)
 

@@ -11,7 +11,7 @@ docker compose logs -f
 
 * mutation { login(email:"a@b.com", password:"password123") { token } }
 
-Use the bundled Adminer at http://localhost:8081 (Server: mysql, User: app, Password: app_password, DB: trade_company) or run one-shot SQL:
+Use the bundled Adminer at http://localhost:8081 (Server: mysql, User: app, Password: app_password, DB: business_exchange) or run one-shot SQL:
 
 
 [GCP]

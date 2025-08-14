@@ -20,11 +20,8 @@ gcloud compute networks vpc-access connectors create cr-connector --region=$REGI
 
 # Deploy to Cloud Run (use the image you already pushed)
 $REGISTRY="${REGION}-docker.pkg.dev"
-gcloud run deploy trade-company `
-  --image="${REGISTRY}/${PROJECT}/${REPO}/${IMAGE}:${TAG}" `
-  --platform=managed --allow-unauthenticated `
-  --vpc-connector=cr-connector --egress-settings=all-traffic `
-  --set-env-vars="APP_ENV=production,APP_PORT=8080,DB_HOST=${DB_IP},DB_PORT=3306,DB_USER=app,DB_PASSWORD=app_password,DB_NAME=trade_company,REDIS_ADDR=${REDIS_HOST}:6379,REDIS_DB=0,JWT_SECRET=556611,CORS_ALLOWED_ORIGINS=*"
+
+
 
 # Artifact Registry + build/push
 gcloud artifacts repositories create $REPO --repository-format=docker --location=$REGION --quiet
