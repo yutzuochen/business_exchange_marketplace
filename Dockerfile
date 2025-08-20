@@ -1,18 +1,47 @@
 # Build stage
-FROM golang:1.23 as builder
+FROM golang:1.23-alpine as builder
+
+# Install build dependencies
+RUN apk add --no-cache git ca-certificates tzdata
+
 WORKDIR /app
-COPY go.mod ./
-COPY go.sum ./
-RUN go mod download || true
+
+# Copy go mod files
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy source code
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o server ./cmd/server
+
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o server ./cmd/server/main.go
 
 # Runtime stage
-FROM gcr.io/distroless/base-debian12
+FROM alpine:latest
+
+# Install ca-certificates for HTTPS requests
+RUN apk --no-cache add ca-certificates
+
 WORKDIR /app
-COPY --from=builder /app/server /app/server
-COPY --from=builder /app/templates /app/templates
-ENV APP_ENV=production
+
+# Copy the binary from builder stage
+COPY --from=builder /app/server .
+
+# Copy templates if they exist
+COPY --from=builder /app/templates ./templates
+
+# Create non-root user
+RUN adduser -D -g '' appuser
+USER appuser
+
+# Expose port
 EXPOSE 8080
-USER 65532:65532
-ENTRYPOINT ["/app/server"] 
+
+# Set environment variables
+ENV APP_ENV=production
+ENV PORT=8080
+
+# Run the application
+CMD ["./server"] 
