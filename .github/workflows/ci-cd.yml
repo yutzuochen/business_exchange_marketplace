@@ -9,7 +9,7 @@ env:
   PROJECT_ID: businessexchange-468413
   REGION: us-central1
   SERVICE_NAME: trade-company
-  IMAGE_NAME: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}
+  IMAGE_NAME: gcr.io/businessexchange-468413/trade-company
 
 jobs:
   # 🐳 構建和推送 Docker 映像
