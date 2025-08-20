@@ -9,7 +9,7 @@ type AuthPayload struct {
 type CreateListingInput struct {
 	Title       string  `json:"title"`
 	Description *string `json:"description,omitempty"`
-	PriceUsd    int     `json:"priceUSD"`
+	Price       int     `json:"price"`
 	Location    *string `json:"location,omitempty"`
 }
 
@@ -17,7 +17,7 @@ type Listing struct {
 	ID          string  `json:"id"`
 	Title       string  `json:"title"`
 	Description *string `json:"description,omitempty"`
-	PriceUsd    int     `json:"priceUSD"`
+	Price       int     `json:"price"`
 	Location    *string `json:"location,omitempty"`
 	OwnerID     string  `json:"ownerID"`
 	CreatedAt   *string `json:"createdAt,omitempty"`

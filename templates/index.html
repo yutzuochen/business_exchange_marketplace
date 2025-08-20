@@ -34,7 +34,7 @@
               <div class="bg-white shadow p-4 rounded">
                 <div class="text-lg font-medium truncate">{{ .Title }}</div>
                 <div class="text-gray-600 text-sm truncate">{{ .Location }}</div>
-                <div class="mt-2 font-semibold">${{ .PriceUSD }}</div>
+                <div class="mt-2 font-semibold">${{ .Price }}</div>
               </div>
             {{ end }}
           </div>
@@ -55,7 +55,7 @@
                     <div class="text-gray-600 text-sm">{{ .Status }}</div>
                   </div>
                   <div class="text-right">
-                    <div class="font-semibold">${{ .AmountUSD }}</div>
+                    <div class="font-semibold">${{ .Amount }}</div>
                     <div class="text-gray-500 text-xs">{{ .CreatedAt }}</div>
                   </div>
                 </li>

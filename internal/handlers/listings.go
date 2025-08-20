@@ -19,7 +19,7 @@ type ListingsHandler struct {
 type listingRequest struct {
 	Title       string `json:"title" binding:"required"`
 	Description string `json:"description"`
-	PriceUSD    int64  `json:"price_usd" binding:"required"`
+	Price       int64  `json:"price" binding:"required"`
 	Category    string `json:"category"`
 	Condition   string `json:"condition"`
 	Location    string `json:"location"`
@@ -28,7 +28,7 @@ type listingRequest struct {
 type listingUpdateRequest struct {
 	Title       *string `json:"title"`
 	Description *string `json:"description"`
-	PriceUSD    *int64  `json:"price_usd"`
+	Price       *int64  `json:"price"`
 	Category    *string `json:"category"`
 	Condition   *string `json:"condition"`
 	Location    *string `json:"location"`
@@ -52,7 +52,7 @@ func (h *ListingsHandler) Create(c *gin.Context) {
 	listing := models.Listing{
 		Title:       req.Title,
 		Description: req.Description,
-		PriceUSD:    req.PriceUSD,
+		Price:       req.Price,
 		Category:    req.Category,
 		Condition:   req.Condition,
 		Location:    req.Location,
@@ -124,10 +124,10 @@ func (h *ListingsHandler) List(c *gin.Context) {
 		query = query.Where("location LIKE ?", "%"+location+"%")
 	}
 	if minPrice > 0 {
-		query = query.Where("price_usd >= ?", minPrice)
+		query = query.Where("price >= ?", minPrice)
 	}
 	if maxPrice > 0 {
-		query = query.Where("price_usd <= ?", maxPrice)
+		query = query.Where("price <= ?", maxPrice)
 	}
 	if condition != "" {
 		query = query.Where("condition = ?", condition)
@@ -152,9 +152,9 @@ func (h *ListingsHandler) List(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"listings": listings,
 		"pagination": gin.H{
-			"page":       page,
-			"limit":      limit,
-			"total":      total,
+			"page":        page,
+			"limit":       limit,
+			"total":       total,
 			"total_pages": (int(total) + limit - 1) / limit,
 		},
 	})
@@ -195,8 +195,8 @@ func (h *ListingsHandler) Update(c *gin.Context) {
 	if req.Description != nil {
 		updates["description"] = *req.Description
 	}
-	if req.PriceUSD != nil {
-		updates["price_usd"] = *req.PriceUSD
+	if req.Price != nil {
+		updates["price"] = *req.Price
 	}
 	if req.Category != nil {
 		updates["category"] = *req.Category

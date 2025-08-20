@@ -57,7 +57,7 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Location    func(childComplexity int) int
 		OwnerID     func(childComplexity int) int
-		PriceUsd    func(childComplexity int) int
+		Price       func(childComplexity int) int
 		Title       func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 	}
@@ -154,12 +154,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Listing.OwnerID(childComplexity), true
 
-	case "Listing.priceUSD":
-		if e.complexity.Listing.PriceUsd == nil {
+	case "Listing.price":
+		if e.complexity.Listing.Price == nil {
 			break
 		}
 
-		return e.complexity.Listing.PriceUsd(childComplexity), true
+		return e.complexity.Listing.Price(childComplexity), true
 
 	case "Listing.title":
 		if e.complexity.Listing.Title == nil {
@@ -696,8 +696,8 @@ func (ec *executionContext) fieldContext_Listing_description(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _Listing_priceUSD(ctx context.Context, field graphql.CollectedField, obj *model.Listing) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Listing_priceUSD(ctx, field)
+func (ec *executionContext) _Listing_price(ctx context.Context, field graphql.CollectedField, obj *model.Listing) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Listing_price(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -710,7 +710,7 @@ func (ec *executionContext) _Listing_priceUSD(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.PriceUsd, nil
+		return obj.Price, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -727,7 +727,7 @@ func (ec *executionContext) _Listing_priceUSD(ctx context.Context, field graphql
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Listing_priceUSD(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Listing_price(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Listing",
 		Field:      field,
@@ -1070,8 +1070,8 @@ func (ec *executionContext) fieldContext_Mutation_createListing(ctx context.Cont
 				return ec.fieldContext_Listing_title(ctx, field)
 			case "description":
 				return ec.fieldContext_Listing_description(ctx, field)
-			case "priceUSD":
-				return ec.fieldContext_Listing_priceUSD(ctx, field)
+			case "price":
+				return ec.fieldContext_Listing_price(ctx, field)
 			case "location":
 				return ec.fieldContext_Listing_location(ctx, field)
 			case "ownerID":
@@ -1194,8 +1194,8 @@ func (ec *executionContext) fieldContext_Query_listings(ctx context.Context, fie
 				return ec.fieldContext_Listing_title(ctx, field)
 			case "description":
 				return ec.fieldContext_Listing_description(ctx, field)
-			case "priceUSD":
-				return ec.fieldContext_Listing_priceUSD(ctx, field)
+			case "price":
+				return ec.fieldContext_Listing_price(ctx, field)
 			case "location":
 				return ec.fieldContext_Listing_location(ctx, field)
 			case "ownerID":
@@ -1264,8 +1264,8 @@ func (ec *executionContext) fieldContext_Query_listing(ctx context.Context, fiel
 				return ec.fieldContext_Listing_title(ctx, field)
 			case "description":
 				return ec.fieldContext_Listing_description(ctx, field)
-			case "priceUSD":
-				return ec.fieldContext_Listing_priceUSD(ctx, field)
+			case "price":
+				return ec.fieldContext_Listing_price(ctx, field)
 			case "location":
 				return ec.fieldContext_Listing_location(ctx, field)
 			case "ownerID":
@@ -3551,7 +3551,7 @@ func (ec *executionContext) unmarshalInputCreateListingInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "description", "priceUSD", "location"}
+	fieldsInOrder := [...]string{"title", "description", "price", "location"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3572,13 +3572,13 @@ func (ec *executionContext) unmarshalInputCreateListingInput(ctx context.Context
 				return it, err
 			}
 			it.Description = data
-		case "priceUSD":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("priceUSD"))
+		case "price":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("price"))
 			data, err := ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.PriceUsd = data
+			it.Price = data
 		case "location":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("location"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -3662,8 +3662,8 @@ func (ec *executionContext) _Listing(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "description":
 			out.Values[i] = ec._Listing_description(ctx, field, obj)
-		case "priceUSD":
-			out.Values[i] = ec._Listing_priceUSD(ctx, field, obj)
+		case "price":
+			out.Values[i] = ec._Listing_price(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

@@ -63,15 +63,19 @@
         <!-- sidebar -->
         <aside>
           <div class="bg-white rounded shadow p-4">
-            <div class="text-3xl font-extrabold text-red-600">${{ .listing.PriceUSD }}</div>
+            <div class="text-3xl font-extrabold text-red-600">${{ .listing.Price }}</div>
             <div class="mt-2 text-sm text-gray-600">聯絡電話：<span class="font-mono">0911-XXXXXX</span></div>
             <dl class="mt-4 divide-y">
-              <div class="py-2 flex justify-between"><dt class="text-gray-600">類別</dt><dd>店面/餐飲</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">行業</dt><dd>店面/餐飲</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">租金</dt><dd>—</dd></div>
               <div class="py-2 flex justify-between"><dt class="text-gray-600">坪數</dt><dd>—</dd></div>
               <div class="py-2 flex justify-between"><dt class="text-gray-600">樓層</dt><dd>—</dd></div>
               <div class="py-2 flex justify-between"><dt class="text-gray-600">地址</dt><dd>{{ .listing.Location }}</dd></div>
               <div class="py-2 flex justify-between"><dt class="text-gray-600">設備裝潢</dt><dd>—</dd></div>
-              <div class="py-2 flex justify-between"><dt class="text-gray-600">創始</dt><dd>{{ .listing.CreatedAt }}</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">創始年份</dt><dd>{{ .listing.CreatedAt }}</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">年營業額</dt><dd>—</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">毛利率</dt><dd>—</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">最快遷入日</dt><dd>—</dd></div>
             </dl>
             <div class="mt-4">
               <a href="/market" class="inline-flex items-center px-4 py-2 rounded bg-blue-600 text-white">回到列表</a>

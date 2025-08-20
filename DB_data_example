@@ -5,7 +5,7 @@ INSERT INTO users (email, password_hash, role, created_at, updated_at) VALUES
 ('admin@example.com','x','admin',NOW(),NOW());
 
 -- Listings (owned by user 2 = seller)
-INSERT INTO listings (title, description, price_usd, location, owner_id, created_at, updated_at) VALUES
+INSERT INTO listings (title, description, price, location, owner_id, created_at, updated_at) VALUES
 ('咖啡店頂讓（信義區）','人潮穩定，含設備與供應商合作。',1500000,'台北市 信義區',2,NOW(),NOW()),
 ('二手烘豆機 5kg','狀況良好，含保養紀錄。',220000,'新北市 板橋區',2,NOW(),NOW()),
 ('雲端帳務外包方案','月租制，適合中小企業。',12000,'Remote',2,NOW(),NOW()),
@@ -22,7 +22,7 @@ INSERT INTO images (listing_id, url, created_at) VALUES
 (5,'https://picsum.photos/seed/listing5/800/600',NOW());
 
 -- Transactions (buyer=1, seller=2)
-INSERT INTO transactions (buyer_id, seller_id, listing_id, amount_usd, status, created_at, updated_at) VALUES
+INSERT INTO transactions (buyer_id, seller_id, listing_id, amount, status, created_at, updated_at) VALUES
 (1,2,1,1500000,'completed',NOW(),NOW()),
 (1,2,2,210000,'pending',NOW(),NOW()),
 (1,2,3,12000,'completed',NOW(),NOW());

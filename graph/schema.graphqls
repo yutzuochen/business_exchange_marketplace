@@ -9,7 +9,7 @@ type Listing {
   id: ID!
   title: String!
   description: String
-  priceUSD: Int!
+  price: Int!
   location: String
   ownerID: ID!
   createdAt: String
@@ -23,7 +23,7 @@ type AuthPayload {
 input CreateListingInput {
   title: String!
   description: String
-  priceUSD: Int!
+  price: Int!
   location: String
 }
 

@@ -4,9 +4,10 @@ import (
 	"log"
 	"time"
 
-	"golang.org/x/crypto/bcrypt"
 	"trade_company/internal/config"
 	"trade_company/internal/models"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -49,19 +50,19 @@ func AutoMigrate(db *gorm.DB) error {
 // SeedData adds sample data to the database for testing
 func SeedData(db *gorm.DB) error {
 	log.Println("Seeding database with sample data...")
-	
+
 	// Check if users already exist
 	var userCount int64
 	db.Model(&models.User{}).Count(&userCount)
-	
+
 	log.Printf("Current user count: %d", userCount)
-	
+
 	// For testing purposes, always seed data
 	// if userCount > 0 {
 	// 	log.Println("Database already has data, skipping seed")
 	// 	return nil
 	// }
-	
+
 	// Clear existing data first
 	log.Println("Clearing existing data...")
 	db.Exec("DELETE FROM transactions")
@@ -70,58 +71,58 @@ func SeedData(db *gorm.DB) error {
 	db.Exec("DELETE FROM images")
 	db.Exec("DELETE FROM listings")
 	db.Exec("DELETE FROM users")
-	
+
 	log.Println("Existing data cleared, starting to seed...")
-	
+
 	// Create sample users
 	users := []models.User{
 		{
 			Email:        "admin@example.com",
 			Username:     "admin",
 			PasswordHash: hashPassword("admin123"),
-			FirstName:   "Admin",
-			LastName:    "User",
-			Role:        "admin",
-			IsActive:    true,
+			FirstName:    "Admin",
+			LastName:     "User",
+			Role:         "admin",
+			IsActive:     true,
 		},
 		{
 			Email:        "john.doe@example.com",
 			Username:     "johndoe",
 			PasswordHash: hashPassword("password123"),
-			FirstName:   "John",
-			LastName:    "Doe",
-			Role:        "user",
-			IsActive:    true,
+			FirstName:    "John",
+			LastName:     "Doe",
+			Role:         "user",
+			IsActive:     true,
 		},
 		{
 			Email:        "jane.smith@example.com",
 			Username:     "janesmith",
 			PasswordHash: hashPassword("password123"),
-			FirstName:   "Jane",
-			LastName:    "Smith",
-			Role:        "user",
-			IsActive:    true,
+			FirstName:    "Jane",
+			LastName:     "Smith",
+			Role:         "user",
+			IsActive:     true,
 		},
 		{
 			Email:        "bob.wilson@example.com",
 			Username:     "bobwilson",
 			PasswordHash: hashPassword("password123"),
-			FirstName:   "Bob",
-			LastName:    "Wilson",
-			Role:        "user",
-			IsActive:    true,
+			FirstName:    "Bob",
+			LastName:     "Wilson",
+			Role:         "user",
+			IsActive:     true,
 		},
 		{
 			Email:        "alice.johnson@example.com",
 			Username:     "alicejohnson",
 			PasswordHash: hashPassword("password123"),
-			FirstName:   "Alice",
-			LastName:    "Johnson",
-			Role:        "user",
-			IsActive:    true,
+			FirstName:    "Alice",
+			LastName:     "Johnson",
+			Role:         "user",
+			IsActive:     true,
 		},
 	}
-	
+
 	for i := range users {
 		if err := db.Create(&users[i]).Error; err != nil {
 			log.Printf("Failed to create user %s: %v", users[i].Username, err)
@@ -129,15 +130,15 @@ func SeedData(db *gorm.DB) error {
 		}
 		log.Printf("Created user: %s (%s)", users[i].Username, users[i].Email)
 	}
-	
+
 	log.Printf("Created %d users successfully", len(users))
-	
+
 	// Create sample listings
 	listings := []models.Listing{
 		{
 			Title:       "MacBook Pro 2023 - 14 inch",
 			Description: "Excellent condition MacBook Pro with M2 Pro chip. 16GB RAM, 512GB SSD. Perfect for development and design work.",
-			PriceUSD:    180000, // $1,800.00
+			Price:       180000, // $1,800.00
 			Category:    "Electronics",
 			Condition:   "excellent",
 			Location:    "San Francisco, CA",
@@ -148,7 +149,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			Title:       "Vintage Leather Office Chair",
 			Description: "Beautiful vintage leather office chair from the 1960s. High-quality leather, very comfortable. Great for home office.",
-			PriceUSD:    45000, // $450.00
+			Price:       45000, // $450.00
 			Category:    "Furniture",
 			Condition:   "good",
 			Location:    "New York, NY",
@@ -159,7 +160,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			Title:       "Professional Camera Lens Set",
 			Description: "Complete set of professional camera lenses: 24-70mm f/2.8, 70-200mm f/2.8, and 50mm f/1.4. Perfect for photography.",
-			PriceUSD:    320000, // $3,200.00
+			Price:       320000, // $3,200.00
 			Category:    "Electronics",
 			Condition:   "excellent",
 			Location:    "Los Angeles, CA",
@@ -170,7 +171,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			Title:       "Antique Wooden Dining Table",
 			Description: "Stunning antique wooden dining table with 6 chairs. Solid oak construction, beautiful craftsmanship. Perfect for family gatherings.",
-			PriceUSD:    120000, // $1,200.00
+			Price:       120000, // $1,200.00
 			Category:    "Furniture",
 			Condition:   "good",
 			Location:    "Chicago, IL",
@@ -181,7 +182,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			Title:       "Mountain Bike - Trek Fuel EX 8",
 			Description: "High-end mountain bike in great condition. Carbon frame, full suspension, perfect for trail riding. Includes helmet and accessories.",
-			PriceUSD:    280000, // $2,800.00
+			Price:       280000, // $2,800.00
 			Category:    "Sports",
 			Condition:   "excellent",
 			Location:    "Denver, CO",
@@ -190,17 +191,17 @@ func SeedData(db *gorm.DB) error {
 			ViewCount:   89,
 		},
 	}
-	
+
 	for i := range listings {
 		if err := db.Create(&listings[i]).Error; err != nil {
 			log.Printf("Failed to create listing %s: %v", listings[i].Title, err)
 			return err
 		}
-		log.Printf("Created listing: %s ($%.2f)", listings[i].Title, float64(listings[i].PriceUSD)/100)
+		log.Printf("Created listing: %s ($%.2f)", listings[i].Title, float64(listings[i].Price)/100)
 	}
-	
+
 	log.Printf("Created %d listings successfully", len(listings))
-	
+
 	// Create sample images for listings
 	images := []models.Image{
 		// MacBook Pro images
@@ -257,7 +258,7 @@ func SeedData(db *gorm.DB) error {
 			IsPrimary: true,
 		},
 	}
-	
+
 	for i := range images {
 		if err := db.Create(&images[i]).Error; err != nil {
 			log.Printf("Failed to create image %s: %v", images[i].Filename, err)
@@ -265,29 +266,29 @@ func SeedData(db *gorm.DB) error {
 		}
 		log.Printf("Created image: %s", images[i].Filename)
 	}
-	
+
 	log.Printf("Created %d images successfully", len(images))
-	
+
 	// Create sample favorites
 	favorites := []models.Favorite{
 		{
-			UserID:    users[2].ID, // Jane Smith
+			UserID:    users[2].ID,    // Jane Smith
 			ListingID: listings[0].ID, // MacBook Pro
 		},
 		{
-			UserID:    users[3].ID, // Bob Wilson
+			UserID:    users[3].ID,    // Bob Wilson
 			ListingID: listings[1].ID, // Office Chair
 		},
 		{
-			UserID:    users[4].ID, // Alice Johnson
+			UserID:    users[4].ID,    // Alice Johnson
 			ListingID: listings[2].ID, // Camera Lens
 		},
 		{
-			UserID:    users[1].ID, // John Doe
+			UserID:    users[1].ID,    // John Doe
 			ListingID: listings[3].ID, // Dining Table
 		},
 	}
-	
+
 	for i := range favorites {
 		if err := db.Create(&favorites[i]).Error; err != nil {
 			log.Printf("Failed to create favorite: %v", err)
@@ -295,37 +296,37 @@ func SeedData(db *gorm.DB) error {
 		}
 		log.Printf("Created favorite for user %d, listing %d", favorites[i].UserID, favorites[i].ListingID)
 	}
-	
+
 	log.Printf("Created %d favorites successfully", len(favorites))
-	
+
 	// Create sample messages
 	messages := []models.Message{
 		{
-			SenderID:   users[2].ID, // Jane Smith
-			ReceiverID: users[1].ID, // John Doe
+			SenderID:   users[2].ID,     // Jane Smith
+			ReceiverID: users[1].ID,     // John Doe
 			ListingID:  &listings[0].ID, // MacBook Pro
 			Subject:    "Question about MacBook Pro",
 			Content:    "Hi John, I'm interested in your MacBook Pro. Is it still available? Can you tell me more about its condition?",
 			IsRead:     false,
 		},
 		{
-			SenderID:   users[1].ID, // John Doe
-			ReceiverID: users[2].ID, // Jane Smith
+			SenderID:   users[1].ID,     // John Doe
+			ReceiverID: users[2].ID,     // Jane Smith
 			ListingID:  &listings[0].ID, // MacBook Pro
 			Subject:    "Re: Question about MacBook Pro",
 			Content:    "Hi Jane, yes it's still available! It's in excellent condition, barely used. I can send you more photos if you'd like.",
 			IsRead:     true,
 		},
 		{
-			SenderID:   users[3].ID, // Bob Wilson
-			ReceiverID: users[2].ID, // Jane Smith
+			SenderID:   users[3].ID,     // Bob Wilson
+			ReceiverID: users[2].ID,     // Jane Smith
 			ListingID:  &listings[1].ID, // Office Chair
 			Subject:    "Office Chair Inquiry",
 			Content:    "Hi Jane, I love your vintage office chair! Would you be willing to ship it to LA? I can cover shipping costs.",
 			IsRead:     false,
 		},
 	}
-	
+
 	for i := range messages {
 		if err := db.Create(&messages[i]).Error; err != nil {
 			log.Printf("Failed to create message: %v", err)
@@ -333,16 +334,16 @@ func SeedData(db *gorm.DB) error {
 		}
 		log.Printf("Created message from user %d to user %d", messages[i].SenderID, messages[i].ReceiverID)
 	}
-	
+
 	log.Printf("Created %d messages successfully", len(messages))
-	
+
 	// Create sample transactions
 	transactions := []models.Transaction{
 		{
 			ListingID:     listings[4].ID, // Mountain Bike
 			BuyerID:       users[3].ID,    // Bob Wilson
 			SellerID:      users[1].ID,    // John Doe
-			AmountUSD:     280000,         // $2,800.00
+			Amount:        280000,         // $2,800.00
 			Status:        "completed",
 			PaymentMethod: "PayPal",
 			CompletedAt:   &[]time.Time{time.Now().Add(-24 * time.Hour)}[0], // 1 day ago
@@ -351,22 +352,22 @@ func SeedData(db *gorm.DB) error {
 			ListingID:     listings[2].ID, // Camera Lens
 			BuyerID:       users[4].ID,    // Alice Johnson
 			SellerID:      users[3].ID,    // Bob Wilson
-			AmountUSD:     320000,         // $3,200.00
+			Amount:        320000,         // $3,200.00
 			Status:        "pending",
 			PaymentMethod: "Credit Card",
 		},
 	}
-	
+
 	for i := range transactions {
 		if err := db.Create(&transactions[i]).Error; err != nil {
 			log.Printf("Failed to create transaction: %v", err)
 			return err
 		}
-		log.Printf("Created transaction: $%.2f for listing %d", float64(transactions[i].AmountUSD)/100, transactions[i].ListingID)
+		log.Printf("Created transaction: $%.2f for listing %d", float64(transactions[i].Amount)/100, transactions[i].ListingID)
 	}
-	
+
 	log.Printf("Created %d transactions successfully", len(transactions))
-	
+
 	log.Println("Database seeding completed successfully!")
 	return nil
 }
