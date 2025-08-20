@@ -10,8 +10,8 @@ on:
 
 env:
   PROJECT_ID: businessexchange-468413
-  REGION: asia-east1
-  SERVICE_NAME: business-exchange
+  REGION: us-central1
+  SERVICE_NAME: trade-company
   IMAGE_NAME: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}
 
 jobs:
