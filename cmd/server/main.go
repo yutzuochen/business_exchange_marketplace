@@ -43,6 +43,11 @@ func main() {
 		zapLogger.Fatal("db automigrate", logger.Err(err))
 	}
 
+	// Seed database with sample data
+	if err := database.SeedData(db); err != nil {
+		zapLogger.Warn("database seeding failed", logger.Err(err))
+	}
+
 	var redisClient *redis.Client
 	if cfg.RedisAddr != "" {
 		r, rerr := redisclient.Connect(cfg)
