@@ -1,0 +1,75 @@
+# 🚀 BusinessExchange CI/CD Dockerfile
+# 多階段構建，優化映像大小和安全性
+
+# 構建階段
+FROM golang:1.22-alpine AS builder
+
+# 安裝必要的工具
+RUN apk add --no-cache git ca-certificates tzdata
+
+# 設置工作目錄
+WORKDIR /app
+
+# 複製 go mod 文件
+COPY go.mod go.sum ./
+
+# 下載依賴
+RUN go mod download
+
+# 複製源代碼
+COPY . .
+
+# 構建應用程式
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+    -ldflags="-w -s -extldflags '-static'" \
+    -o server ./cmd/server
+
+# 測試階段
+FROM golang:1.22-alpine AS tester
+
+WORKDIR /app
+
+# 複製依賴和源代碼
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+
+# 運行測試
+RUN go test -v -race -coverprofile=coverage.out ./...
+
+# 運行安全掃描
+RUN go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
+RUN gosec -fmt=json -out=security-report.json ./...
+
+# 生產階段
+FROM gcr.io/distroless/base-debian12:latest
+
+# 安裝 CA 證書和時區數據
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
+
+# 設置工作目錄
+WORKDIR /app
+
+# 複製二進制文件
+COPY --from=builder /app/server /app/server
+
+# 複製模板和靜態文件
+COPY --from=builder /app/templates /app/templates
+COPY --from=builder /app/static /app/static
+
+# 創建必要的目錄
+RUN mkdir -p /app/uploads /app/logs
+
+# 設置非 root 用戶
+USER 65534:65534
+
+# 暴露端口
+EXPOSE 8080
+
+# 健康檢查
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD ["/app/server", "-health-check"] || exit 1
+
+# 啟動應用程式
+ENTRYPOINT ["/app/server"]

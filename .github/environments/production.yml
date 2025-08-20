@@ -1,0 +1,11 @@
+name: production
+url: https://business-exchange-xxxxx-uc.a.run.app
+protection_rules:
+  - required_reviews: 2
+    required_approving_review_count: 2
+    dismiss_stale_reviews: true
+    require_code_owner_reviews: true
+    required_status_checks:
+      - "lint-and-test"
+      - "build-and-push"
+    restrictions: {}
