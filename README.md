@@ -263,3 +263,4 @@ gcloud run deploy business-exchange \
 
 本專案採用 MIT 授權條款。
 # Trigger GitHub Actions
+# Trigger deployment after fixing GCP_SA_KEY
