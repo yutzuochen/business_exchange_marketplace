@@ -262,3 +262,4 @@ gcloud run deploy business-exchange \
 ## 📄 授權
 
 本專案採用 MIT 授權條款。
+# Trigger GitHub Actions
