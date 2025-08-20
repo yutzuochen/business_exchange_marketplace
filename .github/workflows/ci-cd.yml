@@ -117,6 +117,7 @@ jobs:
           
       - name: 🚀 Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
+        id: deploy
         with:
           service: ${{ env.SERVICE_NAME }}-staging
           image: ${{ env.IMAGE_NAME }}:${{ github.sha }}
@@ -126,11 +127,12 @@ jobs:
             APP_ENV=staging
             APP_NAME=BusinessExchange-Staging
             JWT_ISSUER=${{ env.PROJECT_ID }}
-          secrets: |
             DB_HOST=${{ secrets.DB_HOST }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_NAME=${{ secrets.DB_NAME }}
+            CLOUDSQL_CONNECTION_NAME=businessexchange-468413:us-central1-c:trade-sql
+          secrets: |
             JWT_SECRET=${{ secrets.JWT_SECRET }}
             REDIS_ADDR=${{ secrets.REDIS_ADDR }}
             
@@ -166,6 +168,7 @@ jobs:
           
       - name: 🚀 Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
+        id: deploy
         with:
           service: ${{ env.SERVICE_NAME }}
           image: ${{ env.IMAGE_NAME }}:${{ github.sha }}
@@ -175,11 +178,12 @@ jobs:
             APP_ENV=production
             APP_NAME=BusinessExchange
             JWT_ISSUER=${{ env.PROJECT_ID }}
-          secrets: |
             DB_HOST=${{ secrets.DB_HOST }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_NAME=${{ secrets.DB_NAME }}
+            CLOUDSQL_CONNECTION_NAME=businessexchange-468413:us-central1-c:trade-sql
+          secrets: |
             JWT_SECRET=${{ secrets.JWT_SECRET }}
             REDIS_ADDR=${{ secrets.REDIS_ADDR }}
             

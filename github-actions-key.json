@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "businessexchange-468413",
+  "private_key_id": "e6bfafba5b410b3f0e2ac206bc72b246818a7ddb",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQCi5LjDaBYpPUYN\nj1dsOFUOyxkH1lwnrB9BuHr7UVDw6PjFboN0iEQiD5o33DpbAG9uoyLZiGhqA+CN\nmtL+/yzDuIOo4Wz3ffZBa+5KIT13eVRbpYtT3vIK8pz3yt0kx6V8sxIVMGKUj+yr\nzbwVmxHidMctoVCe4F2PAfmh3J1/+ijLBNhIQtXCaa7ir4QV+OEhUAuwdpGNXqhz\nSFTx4wC9jlCl4hE6vBAUndu2LJV17742hexurIUIyMiCB19oET2qE9RZWVFnkEyT\nu/THElOz+ATclIn/ZwLqD4UyAeDKGtmVB8UMTbowRA5hAlcnVKnx8K1xm8ca7MwV\nOdB78/sVAgMBAAECgf8BVchoh7U0YLqrOfoHWTDgMUNHjDYtSOxfoe7kKboud46A\nyLj50dKUI16YeBoW1yXIS0x0K6cQrwlUGwYVrv2uGeN5LAvreyMh/u0pJF6hIWrq\nCwNNph9KD0d/cFartYxox8dxWdBMglqQrhjrrt8Naw/kYwnbsZ/Iypw/JlV4/m3e\nZpIE1lppM4HD2NvGeS3B8PmuLSjMK2wxzA8JzQzBFeLSqErx8x/5ONtZ9d0EwCaD\nxBloB9j0TvqDG0EPpnDUhpZcY6UdXxu1YzoEftTsO6WXKF3JHdLhQqKjh7XwX9X2\nNzYjXHEmCjvtq01TGbrX44qtrXO/0a1flALyf7ECgYEAz4nRuxyY8KuXoGmKM/uC\nLW0il21d02XyV449+Vg2ej5sNQXCcJNvzEHuTNCEjBSV3XYyYJBE7XCnV+hDXWma\nfsbVcL2n4l2Dh5WWV+lCNiiuv1Li6uuB8coVnbZUGmiOlFxunbdtt4a3kc3RMvrX\nuTwVMOhCD5ivU4p/5o/9kpECgYEAyO4hCTig6NK6rq6EJqUfyG7U4x1xtKq1XY0r\nh16tMVF8O9ImTugeSpOeJEnw5OzeG7fU1lGJxWPQVkJ77gAkfyu4zZIq1o577oP3\nG1g30UxoBrqX0i/x90NGtvZZRc7ZVuJ1XEWZ+GQuQO5KXG3iC51vnrQCYzmeax7w\nvm8M2kUCgYBw2ysXqudoCId9jaa/uccCWNR0r95TtJ5iClGdI+EL/KHu+2DOwv4K\nftfNIZ7SZedQ9JNUe19gFuCJJx5qz6BZzFoI4rlGmT+LHUcSKx/8P4c3NyV6RfL1\nvsSebKWzbqQJ/XGRhku9fx6XxOo75LgmXIvRepthy8+biDcg87AaYQKBgQCehckI\nlmXU6hSgpkzalGH75v0MZfmEeT33nd3ewiJQC6LBK25PyK/FVKtqo+9rHTmqkqFX\nqSLR2YrP00olHnWs41i8zvn/JpC+P90f9Lys4uQbkvEewfbbhndu9/K8sZIlCyte\nbgcowhj/30BJpeO2GDKs+gX8NMQ4bUOwarqwJQKBgCR7/0Se44JyQwAhprsB8q50\nUsgDEkWzMX+uj9epS6Kj70aJozo5NaATVyMW1l5i6zg/IbVpZAEhUsKciBUwITqZ\nkSNl0VNZ+nt+KSZxGAJeBlaJKlG/qldTPbZhv1th/HVTYL5uQwtiSeDdna/lg7/b\nvPVRUqAJz2yJZYtKEn19\n-----END PRIVATE KEY-----\n",
+  "client_email": "github-actions@businessexchange-468413.iam.gserviceaccount.com",
+  "client_id": "109894279302723133832",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/github-actions%40businessexchange-468413.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
