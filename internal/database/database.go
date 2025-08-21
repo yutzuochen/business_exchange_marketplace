@@ -20,8 +20,10 @@ func Connect(cfg *config.Config, _ any) (*gorm.DB, error) {
 		logMode = logger.Warn
 	}
 	db, err := gorm.Open(mysql.Open(cfg.MySQLDSN()), &gorm.Config{
-		PrepareStmt: true,
-		Logger:      logger.Default.LogMode(logMode),
+		PrepareStmt:                              true,
+		Logger:                                   logger.Default.LogMode(logMode),
+		DisableForeignKeyConstraintWhenMigrating: true,
+		DisableNestedTransaction:                 true,
 	})
 	if err != nil {
 		return nil, err
@@ -132,7 +134,7 @@ func SeedData(db *gorm.DB) error {
 		log.Printf("Created user: %s (%s)", users[i].Username, users[i].Email)
 	}
 
-	log.Printf("Created %d users successfully", len(users))
+	log.Printf("Created %d users successfully :))))", len(users))
 
 	// Create sample listings
 	listings := []models.Listing{
@@ -151,9 +153,9 @@ func SeedData(db *gorm.DB) error {
 			Floor:             0, // Not applicable
 			Equipment:         "Includes original charger, protective case, and documentation",
 			Decoration:        "modern",
-			AnnualRevenue:     0,           // Not applicable for personal items
-			GrossProfitRate:   0.0,         // Not applicable
-			FastestMovingDate: time.Time{}, // Not applicable
+			AnnualRevenue:     0,                                           // Not applicable for personal items
+			GrossProfitRate:   0.0,                                         // Not applicable
+			FastestMovingDate: time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC), // Default date
 			PhoneNumber:       "+1-555-0123",
 			SquareMeters:      0.0, // Not applicable
 			Industry:          "Technology",
@@ -174,9 +176,9 @@ func SeedData(db *gorm.DB) error {
 			Floor:             0, // Not applicable
 			Equipment:         "Original leather upholstery, chrome base, swivel mechanism",
 			Decoration:        "vintage",
-			AnnualRevenue:     0,           // Not applicable for personal items
-			GrossProfitRate:   0.0,         // Not applicable
-			FastestMovingDate: time.Time{}, // Not applicable
+			AnnualRevenue:     0,                                           // Not applicable for personal items
+			GrossProfitRate:   0.0,                                         // Not applicable
+			FastestMovingDate: time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC), // Default date
 			PhoneNumber:       "+1-555-0124",
 			SquareMeters:      0.0, // Not applicable
 			Industry:          "Furniture",
@@ -197,9 +199,9 @@ func SeedData(db *gorm.DB) error {
 			Floor:             0, // Not applicable
 			Equipment:         "Includes lens caps, hoods, carrying case, and cleaning kit",
 			Decoration:        "professional",
-			AnnualRevenue:     0,           // Not applicable for personal items
-			GrossProfitRate:   0.0,         // Not applicable
-			FastestMovingDate: time.Time{}, // Not applicable
+			AnnualRevenue:     0,                                           // Not applicable for personal items
+			GrossProfitRate:   0.0,                                         // Not applicable
+			FastestMovingDate: time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC), // Default date
 			PhoneNumber:       "+1-555-0125",
 			SquareMeters:      0.0, // Not applicable
 			Industry:          "Photography",
@@ -220,9 +222,9 @@ func SeedData(db *gorm.DB) error {
 			Floor:             0, // Not applicable
 			Equipment:         "Table with 6 matching chairs, table runner, and care instructions",
 			Decoration:        "antique",
-			AnnualRevenue:     0,           // Not applicable for personal items
-			GrossProfitRate:   0.0,         // Not applicable
-			FastestMovingDate: time.Time{}, // Not applicable
+			AnnualRevenue:     0,                                           // Not applicable for personal items
+			GrossProfitRate:   0.0,                                         // Not applicable
+			FastestMovingDate: time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC), // Default date
 			PhoneNumber:       "+1-555-0126",
 			SquareMeters:      0.0, // Not applicable
 			Industry:          "Furniture",
@@ -243,9 +245,9 @@ func SeedData(db *gorm.DB) error {
 			Floor:             0, // Not applicable
 			Equipment:         "Bike, helmet, pump, repair kit, and maintenance guide",
 			Decoration:        "sporty",
-			AnnualRevenue:     0,           // Not applicable for personal items
-			GrossProfitRate:   0.0,         // Not applicable
-			FastestMovingDate: time.Time{}, // Not applicable
+			AnnualRevenue:     0,                                           // Not applicable for personal items
+			GrossProfitRate:   0.0,                                         // Not applicable
+			FastestMovingDate: time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC), // Default date
 			PhoneNumber:       "+1-555-0127",
 			SquareMeters:      0.0, // Not applicable
 			Industry:          "Sports",
@@ -354,17 +356,17 @@ func SeedData(db *gorm.DB) error {
 			OwnerID:           users[2].ID, // Jane Smith
 			ViewCount:         67,
 			BrandStory:        "Professional kitchen equipment from a successful restaurant that has been serving quality food for over 10 years.",
-			Rent:              0, // Not for rent
-			Floor:             0, // Not applicable
+			Rent:              50000, // Not for rent
+			Floor:             66,    // Not applicable
 			Equipment:         "Commercial ovens, grills, fryers, refrigerators, prep tables, dishwashers",
 			Decoration:        "commercial",
-			AnnualRevenue:     0,   // Not applicable for equipment sales
-			GrossProfitRate:   0.0, // Not applicable
+			AnnualRevenue:     600, // Not applicable for equipment sales
+			GrossProfitRate:   3.0, // Not applicable
 			FastestMovingDate: time.Date(2024, 10, 5, 0, 0, 0, 0, time.UTC),
 			PhoneNumber:       "+1-555-0132",
-			SquareMeters:      0.0, // Not applicable
+			SquareMeters:      34.5, // Not applicable
 			Industry:          "Food Service",
-			Deposit:           0, // Not applicable
+			Deposit:           40000, // Not applicable
 		},
 		{
 			Title:             "Franchise Opportunity - Fast Food",
@@ -390,10 +392,13 @@ func SeedData(db *gorm.DB) error {
 			Deposit:           50000, // $50,000 initial deposit
 		},
 	}
-
+	log.Printf("============= start to create listings =============")
 	for i := range listings {
+		log.Printf("listings[i]: %+v\n", listings[i])
 		if err := db.Create(&listings[i]).Error; err != nil {
-			log.Printf("Failed to create listing %s: %v", listings[i].Title, err)
+			log.Printf("Failed QQ to create listing %s: %v", listings[i].Title, err)
+			// fmt.Printf("listings[i]: %+v\n", listings[i])
+
 			return err
 		}
 		log.Printf("Created listing: %s ($%.2f)", listings[i].Title, float64(listings[i].Price)/100)

@@ -37,4 +37,10 @@ docker-debug:
 	docker compose -f docker-compose.debug.yml up --build -d
 
 docker-debug-down:
-	docker compose -f docker-compose.debug.yml down -v 
+	docker compose -f docker-compose.debug.yml down -v
+
+docker-dev:
+	docker compose -f docker-compose.dev.yml up --build -d
+
+docker-dev-down:
+	docker compose -f docker-compose.dev.yml down -v 
