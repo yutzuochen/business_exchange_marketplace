@@ -39,10 +39,6 @@ func main() {
 		zapLogger.Fatal("db connect", logger.Err(err))
 	}
 
-	if err := database.AutoMigrate(db); err != nil {
-		zapLogger.Fatal("db automigrate", logger.Err(err))
-	}
-
 	// Seed database with sample data
 	if err := database.SeedData(db); err != nil {
 		zapLogger.Warn("database seeding failed", logger.Err(err))

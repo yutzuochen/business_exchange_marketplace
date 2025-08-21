@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  app-debug:
+    build:
+      context: .
+      dockerfile: Dockerfile.debug
+    ports:
+      - "8080:8080"      # Application port
+      - "40000:40000"    # Delve debug port
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=app
+      - DB_PASSWORD=app_password
+      - DB_NAME=business_exchange
+      - REDIS_ADDR=redis:6379
+      - APP_PORT=8080
+      - APP_ENV=development
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - .:/app          # Mount source code for live reloading
+      - /app/server     # Exclude binary from volume mount
+    networks:
+      - business_exchange_network
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: business_exchange
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - business_exchange_network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - business_exchange_network
+
+volumes:
+  mysql_data:
+
+networks:
+  business_exchange_network:
+    driver: bridge

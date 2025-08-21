@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS images (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    listing_id BIGINT UNSIGNED NOT NULL,
+    url VARCHAR(500) NOT NULL,
+    alt_text VARCHAR(255),
+    is_primary BOOLEAN DEFAULT FALSE,
+    created_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
+    INDEX idx_listing_id (listing_id),
+    FOREIGN KEY (listing_id) REFERENCES listings(id) ON DELETE CASCADE
+);

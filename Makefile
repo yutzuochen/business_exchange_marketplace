@@ -19,10 +19,22 @@ gqlgen:
 	go run github.com/99designs/gqlgen generate
 
 migrate:
-	go run ./cmd/migrate # optional if we add a migrate command later
+	go run ./cmd/migrate -action=up
+
+migrate-down:
+	go run ./cmd/migrate -action=down
+
+migrate-status:
+	go run ./cmd/migrate -action=status
 
 docker-up:
 	docker compose up --build -d
 
 docker-down:
-	docker compose down -v 
+	docker compose down -v
+
+docker-debug:
+	docker compose -f docker-compose.debug.yml up --build -d
+
+docker-debug-down:
+	docker compose -f docker-compose.debug.yml down -v 

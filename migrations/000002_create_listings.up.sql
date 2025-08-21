@@ -1,0 +1,38 @@
+CREATE TABLE IF NOT EXISTS listings (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    price BIGINT NOT NULL,
+    category VARCHAR(100),
+    `condition` VARCHAR(50) DEFAULT 'used',
+    location VARCHAR(255),
+    status VARCHAR(20) DEFAULT 'active',
+    owner_id BIGINT UNSIGNED NOT NULL,
+    view_count INT DEFAULT 0,
+    created_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
+    updated_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+    brand_story TEXT,
+    rent BIGINT,
+    floor INT,
+    equipment TEXT,
+    decoration VARCHAR(100),
+    annual_revenue BIGINT,
+    gross_profit_rate DOUBLE,
+    fastest_moving_date DATETIME(3),
+    phone_number VARCHAR(20),
+    square_meters DOUBLE,
+    industry VARCHAR(100),
+    deposit BIGINT,
+    INDEX idx_title (title),
+    INDEX idx_price (price),
+    INDEX idx_category (category),
+    INDEX idx_location (location),
+    INDEX idx_status (status),
+    INDEX idx_owner_id (owner_id),
+    INDEX idx_rent (rent),
+    INDEX idx_industry (industry),
+    FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
+
