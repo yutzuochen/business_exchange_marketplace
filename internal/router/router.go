@@ -57,10 +57,12 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 	// Public pages
 	r.GET("/", func(c *gin.Context) {
 		var txs []models.Transaction
-		_ = db.Order("created_at desc").Limit(10).Find(&txs).Error
-
 		var listings []models.Listing
-		_ = db.Order("id desc").Limit(8).Find(&listings).Error
+
+		if db != nil {
+			_ = db.Order("created_at desc").Limit(10).Find(&txs).Error
+			_ = db.Order("id desc").Limit(8).Find(&listings).Error
+		}
 
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"transactions": txs,
@@ -70,10 +72,12 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 
 	r.GET("/market", func(c *gin.Context) {
 		var txs []models.Transaction
-		_ = db.Order("created_at desc").Limit(10).Find(&txs).Error
-
 		var listings []models.Listing
-		_ = db.Order("id desc").Limit(8).Find(&listings).Error
+
+		if db != nil {
+			_ = db.Order("created_at desc").Limit(10).Find(&txs).Error
+			_ = db.Order("id desc").Limit(8).Find(&listings).Error
+		}
 
 		c.HTML(http.StatusOK, "market_home.html", gin.H{
 			"transactions": txs,
@@ -84,7 +88,7 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 	// Search listing by title and redirect to detail page if found
 	r.GET("/market/search", func(c *gin.Context) {
 		q := c.Query("q")
-		if q == "" {
+		if q == "" || db == nil {
 			c.Redirect(http.StatusFound, "/market")
 			return
 		}
@@ -99,6 +103,10 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 	// Listing detail page
 	r.GET("/market/listings/:id", func(c *gin.Context) {
 		idStr := c.Param("id")
+		if db == nil {
+			c.String(http.StatusServiceUnavailable, "database not available")
+			return
+		}
 		var ls models.Listing
 		if err := db.First(&ls, idStr).Error; err != nil {
 			c.String(http.StatusNotFound, "listing not found")

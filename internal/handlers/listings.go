@@ -16,6 +16,27 @@ type ListingsHandler struct {
 	DB *gorm.DB
 }
 
+func (h *ListingsHandler) checkDB(c *gin.Context) bool {
+	if h.DB == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Database not available"})
+		return false
+	}
+
+	// Check if database connection is alive
+	sqlDB, err := h.DB.DB()
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Database connection error"})
+		return false
+	}
+
+	if err := sqlDB.Ping(); err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Database ping failed"})
+		return false
+	}
+
+	return true
+}
+
 type listingRequest struct {
 	Title       string `json:"title" binding:"required"`
 	Description string `json:"description"`
@@ -36,6 +57,10 @@ type listingUpdateRequest struct {
 }
 
 func (h *ListingsHandler) Create(c *gin.Context) {
+	if !h.checkDB(c) {
+		return
+	}
+
 	var req listingRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -72,6 +97,10 @@ func (h *ListingsHandler) Create(c *gin.Context) {
 }
 
 func (h *ListingsHandler) Get(c *gin.Context) {
+	if !h.checkDB(c) {
+		return
+	}
+
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
@@ -96,6 +125,10 @@ func (h *ListingsHandler) Get(c *gin.Context) {
 }
 
 func (h *ListingsHandler) List(c *gin.Context) {
+	if !h.checkDB(c) {
+		return
+	}
+
 	// Parse query parameters
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
@@ -325,6 +358,10 @@ func (h *ListingsHandler) UploadImages(c *gin.Context) {
 }
 
 func (h *ListingsHandler) GetCategories(c *gin.Context) {
+	if !h.checkDB(c) {
+		return
+	}
+
 	var categories []string
 	h.DB.Model(&models.Listing{}).
 		Where("status = ?", "active").

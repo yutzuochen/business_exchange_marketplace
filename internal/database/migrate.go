@@ -1,26 +1,42 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
+	"trade_company/internal/config"
+
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/mysql"
+	migrateMySQL "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"gorm.io/gorm"
 )
 
 // RunMigrations runs database migrations using golang-migrate
 func RunMigrations(db *gorm.DB) error {
-	// Get the underlying *sql.DB from GORM
-	sqlDB, err := db.DB()
+	// Create a separate database connection for migrations to avoid conflicts
+	// Load config to get DSN
+	cfg, err := config.Load()
 	if err != nil {
-		return fmt.Errorf("failed to get underlying sql.DB: %w", err)
+		return fmt.Errorf("failed to load config for migrations: %w", err)
 	}
 
-	// Create MySQL driver instance
-	driver, err := mysql.WithInstance(sqlDB, &mysql.Config{})
+	// Create a separate database connection for migrations
+	migrationDB, err := sql.Open("mysql", cfg.MySQLDSN())
+	if err != nil {
+		return fmt.Errorf("failed to open migration database: %w", err)
+	}
+	defer migrationDB.Close()
+
+	// Test the migration connection
+	if err := migrationDB.Ping(); err != nil {
+		return fmt.Errorf("failed to ping migration database: %w", err)
+	}
+
+	// Create MySQL driver instance with separate connection
+	driver, err := migrateMySQL.WithInstance(migrationDB, &migrateMySQL.Config{})
 	if err != nil {
 		return fmt.Errorf("failed to create mysql driver: %w", err)
 	}
@@ -36,12 +52,19 @@ func RunMigrations(db *gorm.DB) error {
 	if err != nil {
 		return fmt.Errorf("failed to create migrate instance: %w", err)
 	}
-	defer m.Close()
 
 	// Run migrations
 	log.Println("Running database migrations...")
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		if srcErr, dbErr := m.Close(); srcErr != nil || dbErr != nil {
+			log.Printf("Warning: failed to close migrate instance on error - src: %v, db: %v", srcErr, dbErr)
+		}
 		return fmt.Errorf("failed to run migrations: %w", err)
+	}
+
+	// Close migrate instance after successful migration
+	if srcErr, dbErr := m.Close(); srcErr != nil || dbErr != nil {
+		log.Printf("Warning: failed to close migrate instance - src: %v, db: %v", srcErr, dbErr)
 	}
 
 	if err == migrate.ErrNoChange {
@@ -55,14 +78,21 @@ func RunMigrations(db *gorm.DB) error {
 
 // RollbackMigrations rolls back the last migration
 func RollbackMigrations(db *gorm.DB) error {
-	// Get the underlying *sql.DB from GORM
-	sqlDB, err := db.DB()
+	// Load config to get DSN
+	cfg, err := config.Load()
 	if err != nil {
-		return fmt.Errorf("failed to get underlying sql.DB: %w", err)
+		return fmt.Errorf("failed to load config for migrations: %w", err)
 	}
 
+	// Create a separate database connection for migrations
+	migrationDB, err := sql.Open("mysql", cfg.MySQLDSN())
+	if err != nil {
+		return fmt.Errorf("failed to open migration database: %w", err)
+	}
+	defer migrationDB.Close()
+
 	// Create MySQL driver instance
-	driver, err := mysql.WithInstance(sqlDB, &mysql.Config{})
+	driver, err := migrateMySQL.WithInstance(migrationDB, &migrateMySQL.Config{})
 	if err != nil {
 		return fmt.Errorf("failed to create mysql driver: %w", err)
 	}
@@ -78,7 +108,11 @@ func RollbackMigrations(db *gorm.DB) error {
 	if err != nil {
 		return fmt.Errorf("failed to create migrate instance: %w", err)
 	}
-	defer m.Close()
+	defer func() {
+		if srcErr, dbErr := m.Close(); srcErr != nil || dbErr != nil {
+			log.Printf("Warning: failed to close migrate instance - src: %v, db: %v", srcErr, dbErr)
+		}
+	}()
 
 	// Rollback last migration
 	log.Println("Rolling back last migration...")
@@ -92,14 +126,21 @@ func RollbackMigrations(db *gorm.DB) error {
 
 // GetMigrationStatus gets the current migration status
 func GetMigrationStatus(db *gorm.DB) error {
-	// Get the underlying *sql.DB from GORM
-	sqlDB, err := db.DB()
+	// Load config to get DSN
+	cfg, err := config.Load()
 	if err != nil {
-		return fmt.Errorf("failed to get underlying sql.DB: %w", err)
+		return fmt.Errorf("failed to load config for migrations: %w", err)
 	}
 
+	// Create a separate database connection for migrations
+	migrationDB, err := sql.Open("mysql", cfg.MySQLDSN())
+	if err != nil {
+		return fmt.Errorf("failed to open migration database: %w", err)
+	}
+	defer migrationDB.Close()
+
 	// Create MySQL driver instance
-	driver, err := mysql.WithInstance(sqlDB, &mysql.Config{})
+	driver, err := migrateMySQL.WithInstance(migrationDB, &migrateMySQL.Config{})
 	if err != nil {
 		return fmt.Errorf("failed to create mysql driver: %w", err)
 	}
@@ -115,7 +156,11 @@ func GetMigrationStatus(db *gorm.DB) error {
 	if err != nil {
 		return fmt.Errorf("failed to create migrate instance: %w", err)
 	}
-	defer m.Close()
+	defer func() {
+		if srcErr, dbErr := m.Close(); srcErr != nil || dbErr != nil {
+			log.Printf("Warning: failed to close migrate instance - src: %v, db: %v", srcErr, dbErr)
+		}
+	}()
 
 	// Get current version
 	version, dirty, err := m.Version()
@@ -133,14 +178,21 @@ func GetMigrationStatus(db *gorm.DB) error {
 
 // ForceVersion forces the migration version to a specific version
 func ForceVersion(db *gorm.DB, version int) error {
-	// Get the underlying *sql.DB from GORM
-	sqlDB, err := db.DB()
+	// Load config to get DSN
+	cfg, err := config.Load()
 	if err != nil {
-		return fmt.Errorf("failed to get underlying sql.DB: %w", err)
+		return fmt.Errorf("failed to load config for migrations: %w", err)
 	}
 
+	// Create a separate database connection for migrations
+	migrationDB, err := sql.Open("mysql", cfg.MySQLDSN())
+	if err != nil {
+		return fmt.Errorf("failed to open migration database: %w", err)
+	}
+	defer migrationDB.Close()
+
 	// Create MySQL driver instance
-	driver, err := mysql.WithInstance(sqlDB, &mysql.Config{})
+	driver, err := migrateMySQL.WithInstance(migrationDB, &migrateMySQL.Config{})
 	if err != nil {
 		return fmt.Errorf("failed to create mysql driver: %w", err)
 	}
@@ -156,7 +208,11 @@ func ForceVersion(db *gorm.DB, version int) error {
 	if err != nil {
 		return fmt.Errorf("failed to create migrate instance: %w", err)
 	}
-	defer m.Close()
+	defer func() {
+		if srcErr, dbErr := m.Close(); srcErr != nil || dbErr != nil {
+			log.Printf("Warning: failed to close migrate instance - src: %v, db: %v", srcErr, dbErr)
+		}
+	}()
 
 	// Force version
 	if err := m.Force(version); err != nil {

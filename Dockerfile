@@ -29,11 +29,13 @@ WORKDIR /app
 # Copy the binary from builder stage
 COPY --from=builder /app/server .
 
-# Copy templates if they exist
+# Copy templates and migrations if they exist
 COPY --from=builder /app/templates ./templates
+COPY --from=builder /app/migrations ./migrations
 
 # Create non-root user
 RUN adduser -D -g '' appuser
+RUN chown -R appuser:appuser /app
 USER appuser
 
 # Expose port

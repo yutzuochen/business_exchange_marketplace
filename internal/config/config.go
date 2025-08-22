@@ -37,7 +37,13 @@ func Load() (*Config, error) {
 	cfg := &Config{}
 	cfg.AppName = getEnv("APP_NAME", "trade_company")
 	cfg.AppEnv = getEnv("APP_ENV", "development")
-	cfg.AppPort = getEnv("APP_PORT", "8080")
+
+	// Cloud Run 會自動設置 PORT 環境變量，優先使用它
+	if port := os.Getenv("PORT"); port != "" {
+		cfg.AppPort = port
+	} else {
+		cfg.AppPort = getEnv("APP_PORT", "8080")
+	}
 
 	// Local test
 	cfg.DBHost = getEnv("DB_HOST", "127.0.0.1") // this should be noted
@@ -65,7 +71,14 @@ func Load() (*Config, error) {
 }
 
 func (c *Config) MySQLDSN() string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true&charset=utf8mb4&loc=Local", c.DBUser, c.DBPassword, c.DBHost, c.DBPort, c.DBName)
+	// Check if DB_HOST is a Unix socket path (Cloud SQL)
+	if len(c.DBHost) > 0 && c.DBHost[0] == '/' {
+		// Unix socket connection for Cloud SQL
+		// Add additional connection parameters for Cloud SQL
+		return fmt.Sprintf("%s:%s@unix(%s)/%s?parseTime=true&charset=utf8mb4&loc=Local&timeout=30s&readTimeout=30s&writeTimeout=30s", c.DBUser, c.DBPassword, c.DBHost, c.DBName)
+	}
+	// TCP connection for local development
+	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true&charset=utf8mb4&loc=Local&timeout=30s&readTimeout=30s&writeTimeout=30s", c.DBUser, c.DBPassword, c.DBHost, c.DBPort, c.DBName)
 }
 
 func getEnv(key, def string) string {

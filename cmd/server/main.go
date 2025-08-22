@@ -20,6 +20,7 @@ import (
 	"trade_company/internal/router"
 
 	redis "github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -34,14 +35,45 @@ func main() {
 	zapLogger := logger.New(cfg.AppEnv)
 	defer zapLogger.Sync()
 
-	db, err := database.Connect(cfg, zapLogger)
-	if err != nil {
-		zapLogger.Fatal("db connect", logger.Err(err))
+	// 嘗試連接數據庫，但不因失敗而退出
+	var db *gorm.DB
+	dbRetryCount := 0
+	maxDbRetries := 5
+
+	for dbRetryCount < maxDbRetries {
+		db, err = database.Connect(cfg, zapLogger)
+		if err == nil {
+			zapLogger.Info("數據庫連接成功")
+			break
+		}
+
+		dbRetryCount++
+		zapLogger.Sugar().Warnw("數據庫連接失敗，重試中", "error", err, "attempt", dbRetryCount)
+
+		if dbRetryCount < maxDbRetries {
+			time.Sleep(time.Duration(dbRetryCount) * time.Second)
+		}
 	}
 
-	// Seed database with sample data
-	if err := database.SeedData(db); err != nil {
-		zapLogger.Warn("database seeding failed", logger.Err(err))
+	if db == nil {
+		zapLogger.Error("無法連接到數據庫，但繼續啟動服務器")
+	} else {
+		zapLogger.Info("數據庫連接成功，開始運行遷移...")
+
+		// 運行數據庫遷移
+		if err := database.RunMigrations(db); err != nil {
+			zapLogger.Error("database migrations failed", logger.Err(err))
+		} else {
+			zapLogger.Info("數據庫遷移完成")
+		}
+
+		// 只有在數據庫連接成功時才嘗試種子數據
+		zapLogger.Info("開始填充種子數據...")
+		if err := database.SeedData(db); err != nil {
+			zapLogger.Error("database seeding failed", logger.Err(err))
+		} else {
+			zapLogger.Info("種子數據填充完成")
+		}
 	}
 
 	var redisClient *redis.Client

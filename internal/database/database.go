@@ -2,6 +2,7 @@ package database
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"trade_company/internal/config"
@@ -19,7 +20,12 @@ func Connect(cfg *config.Config, _ any) (*gorm.DB, error) {
 	if cfg.AppEnv == "production" {
 		logMode = logger.Warn
 	}
-	db, err := gorm.Open(mysql.Open(cfg.MySQLDSN()), &gorm.Config{
+	dsn := cfg.MySQLDSN()
+	// Log DSN for debugging (without password)
+	debugDSN := strings.Replace(dsn, cfg.DBPassword, "***", 1)
+	log.Printf("Connecting to database with DSN: %s", debugDSN)
+
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		PrepareStmt:                              true,
 		Logger:                                   logger.Default.LogMode(logMode),
 		DisableForeignKeyConstraintWhenMigrating: true,
@@ -34,7 +40,8 @@ func Connect(cfg *config.Config, _ any) (*gorm.DB, error) {
 	}
 	sqlDB.SetMaxIdleConns(cfg.DBMaxIdleConns)
 	sqlDB.SetMaxOpenConns(cfg.DBMaxOpenConns)
-	sqlDB.SetConnMaxLifetime(60 * time.Minute)
+	sqlDB.SetConnMaxLifetime(30 * time.Minute) // Shorter lifetime for Cloud SQL
+	sqlDB.SetConnMaxIdleTime(5 * time.Minute)  // Close idle connections sooner
 	return db, nil
 }
 
