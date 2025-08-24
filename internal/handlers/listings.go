@@ -82,7 +82,7 @@ func (h *ListingsHandler) Create(c *gin.Context) {
 		Condition:   req.Condition,
 		Location:    req.Location,
 		OwnerID:     ownerID,
-		Status:      "active",
+		Status:      "活躍",
 	}
 
 	if err := h.DB.Create(&listing).Error; err != nil {
@@ -148,7 +148,7 @@ func (h *ListingsHandler) List(c *gin.Context) {
 	offset := (page - 1) * limit
 
 	// Build query
-	query := h.DB.Model(&models.Listing{}).Where("status = ?", "active")
+	query := h.DB.Model(&models.Listing{}).Where("status = ?", "活躍")
 
 	if category != "" {
 		query = query.Where("category = ?", category)

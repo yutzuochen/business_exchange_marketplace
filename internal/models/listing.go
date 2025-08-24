@@ -10,7 +10,7 @@ type Listing struct {
 	Category          string    `gorm:"size:100;index" json:"category"`
 	Condition         string    `gorm:"size:50;default:used" json:"condition"`
 	Location          string    `gorm:"size:255;index" json:"location"`
-	Status            string    `gorm:"size:20;default:active;index" json:"status"`
+	Status            string    `gorm:"size:50;default:活躍;index" json:"status"`
 	OwnerID           uint      `gorm:"index;not null" json:"owner_id"`
 	ViewCount         int       `gorm:"default:0" json:"view_count"`
 	CreatedAt         time.Time `json:"created_at"`

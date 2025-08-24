@@ -146,257 +146,142 @@ func SeedData(db *gorm.DB) error {
 	// Create sample listings
 	listings := []models.Listing{
 		{
-			Title:             "MacBook Pro 2023 - 14 inch",
-			Description:       "Excellent condition MacBook Pro with M2 Pro chip. 16GB RAM, 512GB SSD. Perfect for development and design work.",
-			Price:             180000, // $1,800.00
-			Category:          "Electronics",
-			Condition:         "excellent",
-			Location:          "San Francisco, CA",
-			Status:            "active",
-			OwnerID:           users[1].ID, // John Doe
-			ViewCount:         45,
-			BrandStory:        "Apple's flagship laptop, designed for professionals who demand the best performance and build quality.",
-			Rent:              0, // Not for rent
-			Floor:             0, // Not applicable
-			Equipment:         "Includes original charger, protective case, and documentation",
-			Decoration:        "modern",
-			AnnualRevenue:     0,                                           // Not applicable for personal items
-			GrossProfitRate:   0.0,                                         // Not applicable
-			FastestMovingDate: time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC), // Default date
-			PhoneNumber:       "+1-555-0123",
-			SquareMeters:      0.0, // Not applicable
-			Industry:          "Technology",
-			Deposit:           0, // Not applicable
-		},
-		{
-			Title:             "Vintage Leather Office Chair",
-			Description:       "Beautiful vintage leather office chair from the 1960s. High-quality leather, very comfortable. Great for home office.",
-			Price:             45000, // $450.00
-			Category:          "Furniture",
-			Condition:         "good",
-			Location:          "New York, NY",
-			Status:            "active",
-			OwnerID:           users[2].ID, // Jane Smith
-			ViewCount:         23,
-			BrandStory:        "Authentic mid-century modern design, crafted by skilled artisans in the golden age of American furniture making.",
-			Rent:              0, // Not for rent
-			Floor:             0, // Not applicable
-			Equipment:         "Original leather upholstery, chrome base, swivel mechanism",
-			Decoration:        "vintage",
-			AnnualRevenue:     0,                                           // Not applicable for personal items
-			GrossProfitRate:   0.0,                                         // Not applicable
-			FastestMovingDate: time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC), // Default date
-			PhoneNumber:       "+1-555-0124",
-			SquareMeters:      0.0, // Not applicable
-			Industry:          "Furniture",
-			Deposit:           0, // Not applicable
-		},
-		{
-			Title:             "Professional Camera Lens Set",
-			Description:       "Complete set of professional camera lenses: 24-70mm f/2.8, 70-200mm f/2.8, and 50mm f/1.4. Perfect for photography.",
-			Price:             320000, // $3,200.00
-			Category:          "Electronics",
-			Condition:         "excellent",
-			Location:          "Los Angeles, CA",
-			Status:            "active",
-			OwnerID:           users[3].ID, // Bob Wilson
-			ViewCount:         67,
-			BrandStory:        "Canon L-series professional lenses, used by award-winning photographers worldwide for their exceptional optical quality.",
-			Rent:              0, // Not for rent
-			Floor:             0, // Not applicable
-			Equipment:         "Includes lens caps, hoods, carrying case, and cleaning kit",
-			Decoration:        "professional",
-			AnnualRevenue:     0,                                           // Not applicable for personal items
-			GrossProfitRate:   0.0,                                         // Not applicable
-			FastestMovingDate: time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC), // Default date
-			PhoneNumber:       "+1-555-0125",
-			SquareMeters:      0.0, // Not applicable
-			Industry:          "Photography",
-			Deposit:           0, // Not applicable
-		},
-		{
-			Title:             "Antique Wooden Dining Table",
-			Description:       "Stunning antique wooden dining table with 6 chairs. Solid oak construction, beautiful craftsmanship. Perfect for family gatherings.",
-			Price:             120000, // $1,200.00
-			Category:          "Furniture",
-			Condition:         "good",
-			Location:          "Chicago, IL",
-			Status:            "active",
-			OwnerID:           users[4].ID, // Alice Johnson
-			ViewCount:         34,
-			BrandStory:        "Handcrafted in the early 1900s by master woodworkers, this table has been the centerpiece of family celebrations for generations.",
-			Rent:              0, // Not for rent
-			Floor:             0, // Not applicable
-			Equipment:         "Table with 6 matching chairs, table runner, and care instructions",
-			Decoration:        "antique",
-			AnnualRevenue:     0,                                           // Not applicable for personal items
-			GrossProfitRate:   0.0,                                         // Not applicable
-			FastestMovingDate: time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC), // Default date
-			PhoneNumber:       "+1-555-0126",
-			SquareMeters:      0.0, // Not applicable
-			Industry:          "Furniture",
-			Deposit:           0, // Not applicable
-		},
-		{
-			Title:             "Mountain Bike - Trek Fuel EX 8",
-			Description:       "High-end mountain bike in great condition. Carbon frame, full suspension, perfect for trail riding. Includes helmet and accessories.",
-			Price:             280000, // $2,800.00
-			Category:          "Sports",
-			Condition:         "excellent",
-			Location:          "Denver, CO",
-			Status:            "active",
-			OwnerID:           users[1].ID, // John Doe
-			ViewCount:         89,
-			BrandStory:        "Trek's premium mountain bike series, designed for serious riders who demand performance and reliability on challenging trails.",
-			Rent:              0, // Not for rent
-			Floor:             0, // Not applicable
-			Equipment:         "Bike, helmet, pump, repair kit, and maintenance guide",
-			Decoration:        "sporty",
-			AnnualRevenue:     0,                                           // Not applicable for personal items
-			GrossProfitRate:   0.0,                                         // Not applicable
-			FastestMovingDate: time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC), // Default date
-			PhoneNumber:       "+1-555-0127",
-			SquareMeters:      0.0, // Not applicable
-			Industry:          "Sports",
-			Deposit:           0, // Not applicable
-		},
-		{
-			Title:             "Downtown Coffee Shop for Sale",
-			Description:       "Profitable coffee shop in prime downtown location. Established customer base, modern equipment, great potential for growth.",
-			Price:             850000, // $8,500.00
-			Category:          "Business",
-			Condition:         "excellent",
-			Location:          "Seattle, WA",
-			Status:            "active",
-			OwnerID:           users[2].ID, // Jane Smith
+			Title:             "好快樂咖啡 ：）",
+			Description:       "這裡是造夢的咖啡鄉，我們的咖啡有特殊秘方，只要一杯，你可感受全身輕飄飄，忘卻世俗一切煩惱，在夢裡，什麼都有",
+			Price:             850000,
+			Category:          "直營",
+			Condition:         "狀況良好，9成新",
+			Location:          "台中市西屯區臺灣大道三段99號",
+			Status:            "活躍",
+			OwnerID:           users[1].ID, // Jane Smith
 			ViewCount:         156,
-			BrandStory:        "A beloved local coffee shop that has been serving the community for over 5 years, known for quality coffee and warm atmosphere.",
-			Rent:              8500, // Monthly rent
-			Floor:             1,    // Ground floor
-			Equipment:         "Commercial espresso machines, grinders, refrigerators, furniture, POS system",
-			Decoration:        "modern",
-			AnnualRevenue:     450000, // $450,000 annual revenue
-			GrossProfitRate:   0.35,   // 35% gross profit margin
+			BrandStory:        "我們曾經是製造業，後來改製造夢想了，我們想造福更多人！！！",
+			Rent:              8500,
+			Floor:             1,
+			Equipment:         "手沖杯，3磅藍山咖啡，一些椅子",
+			Decoration:        "夢境風",
+			AnnualRevenue:     450000,
+			GrossProfitRate:   0.35,
 			FastestMovingDate: time.Date(2024, 6, 15, 0, 0, 0, 0, time.UTC),
-			PhoneNumber:       "+1-555-0128",
-			SquareMeters:      120.0, // 120 square meters
-			Industry:          "Food & Beverage",
-			Deposit:           50000, // $50,000 deposit
+			PhoneNumber:       "0939888888",
+			SquareMeters:      120.0,
+			Industry:          "餐飲業",
+			Deposit:           50000,
 		},
 		{
-			Title:             "Tech Startup Office Space",
-			Description:       "Modern office space perfect for tech startups. Open floor plan, meeting rooms, high-speed internet, parking included.",
-			Price:             0, // For rent only
-			Category:          "Real Estate",
-			Condition:         "excellent",
-			Location:          "Austin, TX",
-			Status:            "active",
-			OwnerID:           users[3].ID, // Bob Wilson
-			ViewCount:         78,
-			BrandStory:        "A state-of-the-art office building designed specifically for modern tech companies, with amenities that foster innovation and collaboration.",
-			Rent:              12000, // Monthly rent
-			Floor:             3,     // Third floor
-			Equipment:         "Furnished workstations, conference rooms, kitchen, lounge area, gym",
-			Decoration:        "contemporary",
-			AnnualRevenue:     0,   // Not applicable for rental properties
-			GrossProfitRate:   0.0, // Not applicable
-			FastestMovingDate: time.Date(2024, 7, 1, 0, 0, 0, 0, time.UTC),
-			PhoneNumber:       "+1-555-0129",
-			SquareMeters:      300.0, // 300 square meters
-			Industry:          "Real Estate",
-			Deposit:           24000, // 2 months deposit
+			Title:             "城市健身俱樂部",
+			Description:       "提供專業教練課程、最新健身器材，會員數超過1500人，穩定現金流。",
+			Price:             2300000,
+			Category:          "加盟",
+			Condition:         "全新裝修",
+			Location:          "台北市大安區信義路四段88號",
+			Status:            "活躍",
+			OwnerID:           users[0].ID, // John Doe
+			ViewCount:         320,
+			BrandStory:        "我們秉持『動起來，改變生活』的理念，打造友善社群健身空間。",
+			Rent:              60000,
+			Floor:             3,
+			Equipment:         "跑步機、飛輪、重訓器材、瑜伽室",
+			Decoration:        "現代工業風",
+			AnnualRevenue:     3200000,
+			GrossProfitRate:   0.42,
+			FastestMovingDate: time.Date(2024, 11, 1, 0, 0, 0, 0, time.UTC),
+			PhoneNumber:       "0922001122",
+			SquareMeters:      450.5,
+			Industry:          "運動健身",
+			Deposit:           300000,
 		},
 		{
-			Title:             "E-commerce Business - Fashion Brand",
-			Description:       "Established online fashion brand with strong social media presence. Includes website, inventory, and customer database.",
-			Price:             650000, // $650,000
-			Category:          "Business",
-			Condition:         "good",
-			Location:          "Miami, FL",
-			Status:            "active",
+			Title:             "手作甜點工坊",
+			Description:       "位於人潮熱區，主打無添加甜點，深受年輕族群喜愛。",
+			Price:             550000,
+			Category:          "直營",
+			Condition:         "8成新",
+			Location:          "新北市板橋區文化路一段110號",
+			Status:            "活躍",
+			OwnerID:           users[2].ID, // Bob Wilson
+			ViewCount:         210,
+			BrandStory:        "以『健康、純粹、美味』為核心，打造甜點的新標準。",
+			Rent:              25000,
+			Floor:             1,
+			Equipment:         "烤箱、冰箱、甜點工作台",
+			Decoration:        "溫馨木質風",
+			AnnualRevenue:     800000,
+			GrossProfitRate:   0.38,
+			FastestMovingDate: time.Date(2025, 1, 5, 0, 0, 0, 0, time.UTC),
+			PhoneNumber:       "0911777999",
+			SquareMeters:      65.0,
+			Industry:          "餐飲業",
+			Deposit:           80000,
+		},
+		{
+			Title:             "小小森林幼兒園",
+			Description:       "已營運5年，生源穩定，位於住宅區，交通便利。",
+			Price:             4200000,
+			Category:          "直營",
+			Condition:         "良好",
+			Location:          "高雄市鳳山區建國路222號",
+			Status:            "活躍",
+			OwnerID:           users[3].ID, // Alice Johnso
+			ViewCount:         530,
+			BrandStory:        "我們相信教育是改變世界的力量，提供孩子最安心的成長環境。",
+			Rent:              90000,
+			Floor:             2,
+			Equipment:         "教學玩具、課桌椅、投影設備",
+			Decoration:        "童趣森林風",
+			AnnualRevenue:     5200000,
+			GrossProfitRate:   0.28,
+			FastestMovingDate: time.Date(2025, 3, 1, 0, 0, 0, 0, time.UTC),
+			PhoneNumber:       "0966123456",
+			SquareMeters:      800.0,
+			Industry:          "教育業",
+			Deposit:           500000,
+		},
+		{
+			Title:             "時尚美甲沙龍",
+			Description:       "鄰近捷運出口，女性消費者為主，回頭率高。",
+			Price:             680000,
+			Category:          "直營",
+			Condition:         "9成新",
+			Location:          "台北市松山區南京東路五段66號",
+			Status:            "活躍",
 			OwnerID:           users[4].ID, // Alice Johnson
-			ViewCount:         203,
-			BrandStory:        "A trendy fashion brand that has successfully built a loyal following through social media marketing and quality products.",
-			Rent:              0, // Online business
-			Floor:             0, // Not applicable
-			Equipment:         "Website, inventory management system, social media accounts, customer database",
-			Decoration:        "trendy",
-			AnnualRevenue:     320000, // $320,000 annual revenue
-			GrossProfitRate:   0.42,   // 42% gross profit margin
-			FastestMovingDate: time.Date(2024, 8, 20, 0, 0, 0, 0, time.UTC),
-			PhoneNumber:       "+1-555-0130",
-			SquareMeters:      0.0, // Online business
-			Industry:          "Fashion & Retail",
-			Deposit:           0, // Not applicable
+			ViewCount:         175,
+			BrandStory:        "美，是一種生活態度，我們致力於讓每位客人找到專屬風格。",
+			Rent:              35000,
+			Floor:             1,
+			Equipment:         "美甲機、舒適沙發椅、光療工具",
+			Decoration:        "簡約時尚風",
+			AnnualRevenue:     950000,
+			GrossProfitRate:   0.45,
+			FastestMovingDate: time.Date(2024, 12, 10, 0, 0, 0, 0, time.UTC),
+			PhoneNumber:       "0955123888",
+			SquareMeters:      55.5,
+			Industry:          "美容業",
+			Deposit:           120000,
 		},
 		{
-			Title:             "Manufacturing Equipment - CNC Machines",
-			Description:       "Complete set of CNC machining equipment for manufacturing business. Includes 3 CNC mills, 2 lathes, and support equipment.",
-			Price:             420000, // $420,000
-			Category:          "Industrial",
-			Condition:         "excellent",
-			Location:          "Detroit, MI",
-			Status:            "active",
-			OwnerID:           users[1].ID, // John Doe
-			ViewCount:         45,
-			BrandStory:        "Professional-grade CNC equipment from leading manufacturers, maintained to the highest standards for precision manufacturing.",
-			Rent:              0, // Not for rent
-			Floor:             0, // Not applicable
-			Equipment:         "3 CNC mills, 2 CNC lathes, tooling, measuring equipment, safety gear",
-			Decoration:        "industrial",
-			AnnualRevenue:     0,   // Not applicable for equipment sales
-			GrossProfitRate:   0.0, // Not applicable
-			FastestMovingDate: time.Date(2024, 9, 10, 0, 0, 0, 0, time.UTC),
-			PhoneNumber:       "+1-555-0131",
-			SquareMeters:      0.0, // Not applicable
-			Industry:          "Manufacturing",
-			Deposit:           0, // Not applicable
-		},
-		{
-			Title:             "Restaurant Kitchen Equipment",
-			Description:       "Complete commercial kitchen setup including ovens, grills, refrigerators, and prep stations. Perfect for new restaurant.",
-			Price:             180000, // $180,000
-			Category:          "Restaurant",
-			Condition:         "good",
-			Location:          "Portland, OR",
-			Status:            "active",
-			OwnerID:           users[2].ID, // Jane Smith
-			ViewCount:         67,
-			BrandStory:        "Professional kitchen equipment from a successful restaurant that has been serving quality food for over 10 years.",
-			Rent:              50000, // Not for rent
-			Floor:             66,    // Not applicable
-			Equipment:         "Commercial ovens, grills, fryers, refrigerators, prep tables, dishwashers",
-			Decoration:        "commercial",
-			AnnualRevenue:     600, // Not applicable for equipment sales
-			GrossProfitRate:   3.0, // Not applicable
-			FastestMovingDate: time.Date(2024, 10, 5, 0, 0, 0, 0, time.UTC),
-			PhoneNumber:       "+1-555-0132",
-			SquareMeters:      34.5, // Not applicable
-			Industry:          "Food Service",
-			Deposit:           40000, // Not applicable
-		},
-		{
-			Title:             "Franchise Opportunity - Fast Food",
-			Description:       "Established fast food franchise with proven business model. Includes training, marketing support, and operational guidelines.",
-			Price:             250000, // $250,000 franchise fee
-			Category:          "Franchise",
-			Condition:         "excellent",
-			Location:          "Phoenix, AZ",
-			Status:            "active",
-			OwnerID:           users[3].ID, // Bob Wilson
-			ViewCount:         134,
-			BrandStory:        "A nationally recognized fast food brand with over 500 locations, offering entrepreneurs a proven path to business success.",
-			Rent:              0, // Franchise opportunity
-			Floor:             0, // Not applicable
-			Equipment:         "Franchise license, training materials, marketing support, operational manual",
-			Decoration:        "branded",
-			AnnualRevenue:     180000, // $180,000 average annual revenue
-			GrossProfitRate:   0.28,   // 28% gross profit margin
-			FastestMovingDate: time.Date(2024, 11, 15, 0, 0, 0, 0, time.UTC),
-			PhoneNumber:       "+1-555-0133",
-			SquareMeters:      0.0, // Not applicable
-			Industry:          "Food Service",
-			Deposit:           50000, // $50,000 initial deposit
+			Title:             "電玩樂園",
+			Description:       "熱門夜市旁，遊戲機台齊全，小朋友與年輕人聚集地。",
+			Price:             1500000,
+			Category:          "加盟",
+			Condition:         "7成新",
+			Location:          "台南市中西區民族路88號",
+			Status:            "活躍",
+			OwnerID:           users[0].ID, // John Doe
+			ViewCount:         410,
+			BrandStory:        "打造快樂天堂，讓遊戲連結不同世代的回憶。",
+			Rent:              50000,
+			Floor:             1,
+			Equipment:         "夾娃娃機、賽車機、音樂機台",
+			Decoration:        "炫彩娛樂風",
+			AnnualRevenue:     2800000,
+			GrossProfitRate:   0.33,
+			FastestMovingDate: time.Date(2025, 2, 20, 0, 0, 0, 0, time.UTC),
+			PhoneNumber:       "0977665544",
+			SquareMeters:      200.0,
+			Industry:          "娛樂業",
+			Deposit:           250000,
 		},
 	}
 	log.Printf("============= start to create listings =============")
@@ -418,107 +303,49 @@ func SeedData(db *gorm.DB) error {
 		// MacBook Pro images
 		{
 			ListingID: listings[0].ID,
-			Filename:  "macbook_pro_1.jpg",
-			URL:       "/static/images/macbook_pro_1.jpg",
-			AltText:   "MacBook Pro front view",
+			Filename:  "coffee_shop_1.jpg",
+			URL:       "https://hiyori.cc/wp/wp-content/uploads/2021/03/%E5%AD%B8%E6%A0%A1%E5%92%96%E5%95%A1%E9%A4%A8-Ecole-Cafe7.jpg",
+			AltText:   "咖啡店：店外觀",
 			Order:     0,
 			IsPrimary: true,
 		},
-		{
-			ListingID: listings[0].ID,
-			Filename:  "macbook_pro_2.jpg",
-			URL:       "/static/images/macbook_pro_2.jpg",
-			AltText:   "MacBook Pro side view",
-			Order:     1,
-			IsPrimary: false,
-		},
-		// Office Chair images
 		{
 			ListingID: listings[1].ID,
-			Filename:  "office_chair_1.jpg",
-			URL:       "/static/images/office_chair_1.jpg",
-			AltText:   "Vintage leather office chair",
+			Filename:  "fitness_gym_1.jpg",
+			URL:       "https://www.worldgymtaiwan.com/files/club/GF/taipei-gf-pc.jpg",
+			AltText:   "健身房：跑步機與重量訓練區",
 			Order:     0,
 			IsPrimary: true,
 		},
-		// Camera Lens images
 		{
 			ListingID: listings[2].ID,
-			Filename:  "camera_lens_1.jpg",
-			URL:       "/static/images/camera_lens_1.jpg",
-			AltText:   "Professional camera lens set",
+			Filename:  "dessert_shop_1.jpg",
+			URL:       "https://annieko.tw/wp-content/uploads/20241206171518_0_00d18a.jpg",
+			AltText:   "甜點店：店內窗景與座位",
 			Order:     0,
 			IsPrimary: true,
 		},
-		// Dining Table images
 		{
 			ListingID: listings[3].ID,
-			Filename:  "dining_table_1.jpg",
-			URL:       "/static/images/dining_table_1.jpg",
-			AltText:   "Antique wooden dining table",
+			Filename:  "kindergarten_1.jpg",
+			URL:       "https://www-ws.gov.taipei/Download.ashx?icon=.JPG&n=RFNDMDczMjYuSlBH&u=LzAwMS9VcGxvYWQvNTc5L2NrZmlsZS9lYTlmYTk1MC0yNmZhLTQwYzctYWYwZS0wYTc4MmE3NWYwN2MuanBn",
+			AltText:   "幼兒園：教室活動空間",
 			Order:     0,
 			IsPrimary: true,
 		},
-		// Mountain Bike images
 		{
 			ListingID: listings[4].ID,
-			Filename:  "mountain_bike_1.jpg",
-			URL:       "/static/images/mountain_bike_1.jpg",
-			AltText:   "Trek Fuel EX 8 mountain bike",
+			Filename:  "nail_salon_1.jpg",
+			URL:       "https://cdn.hippolife.tw/wp-content/uploads/2025/03/19154341/DSC05792-edit-2.webp",
+			AltText:   "美甲沙龍：店內座位與裝潢",
 			Order:     0,
 			IsPrimary: true,
 		},
-		// Coffee Shop images
 		{
 			ListingID: listings[5].ID,
-			Filename:  "coffee_shop_1.jpg",
-			URL:       "/static/images/coffee_shop_1.jpg",
-			AltText:   "Downtown coffee shop interior",
-			Order:     0,
-			IsPrimary: true,
-		},
-		// Office Space images
-		{
-			ListingID: listings[6].ID,
-			Filename:  "office_space_1.jpg",
-			URL:       "/static/images/office_space_1.jpg",
-			AltText:   "Modern office space interior",
-			Order:     0,
-			IsPrimary: true,
-		},
-		// Fashion Brand images
-		{
-			ListingID: listings[7].ID,
-			Filename:  "fashion_brand_1.jpg",
-			URL:       "/static/images/fashion_brand_1.jpg",
-			AltText:   "Fashion brand website screenshot",
-			Order:     0,
-			IsPrimary: true,
-		},
-		// CNC Equipment images
-		{
-			ListingID: listings[8].ID,
-			Filename:  "cnc_equipment_1.jpg",
-			URL:       "/static/images/cnc_equipment_1.jpg",
-			AltText:   "CNC machining equipment",
-			Order:     0,
-			IsPrimary: true,
-		},
-		// Kitchen Equipment images
-		{
-			ListingID: listings[9].ID,
-			Filename:  "kitchen_equipment_1.jpg",
-			URL:       "/static/images/kitchen_equipment_1.jpg",
-			AltText:   "Commercial kitchen equipment",
-			Order:     0,
-			IsPrimary: true,
-		},
-		// Franchise images
-		{
-			ListingID: listings[10].ID,
-			Filename:  "franchise_1.jpg",
-			URL:       "/static/images/franchise_1.jpg",
-			AltText:   "Fast food franchise storefront",
+			Filename:  "claw_machine_1.jpg",
+			URL:       "https://fupo.tw/wp-content/uploads/2023/01/%E5%8F%B0%E5%8D%97%E5%A8%83%E5%A8%83%E6%A9%9F%E6%8E%A8%E8%96%A6%E5%84%AA%E5%93%81%E5%A8%83%E5%A8%83%E5%B1%8B-3-1.jpg",
+			AltText:   "夾娃娃機樂園：店外觀",
 			Order:     0,
 			IsPrimary: true,
 		},
@@ -558,15 +385,15 @@ func SeedData(db *gorm.DB) error {
 		},
 		{
 			UserID:    users[4].ID,    // Alice Johnson
-			ListingID: listings[6].ID, // Office Space
+			ListingID: listings[2].ID, // Dessert Shop
 		},
 		{
 			UserID:    users[1].ID,    // John Doe
-			ListingID: listings[7].ID, // Fashion Brand
+			ListingID: listings[4].ID, // Nail Salon
 		},
 		{
 			UserID:    users[3].ID,    // Bob Wilson
-			ListingID: listings[8].ID, // CNC Equipment
+			ListingID: listings[1].ID, // Fitness Gym
 		},
 	}
 
