@@ -82,6 +82,20 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 		c.HTML(http.StatusOK, "market_home.html", gin.H{
 			"transactions": txs,
 			"listings":     listings,
+			"listingPriceRanges": func() []map[string]interface{} {
+				ranges := make([]map[string]interface{}, len(listings))
+				for i, l := range listings {
+					low := int64(float64(l.Price) * 0.85)
+					high := int64(float64(l.Price) * 1.15)
+					ranges[i] = map[string]interface{}{
+						"id":    l.ID,
+						"low":   low,
+						"high":  high,
+						"price": l.Price,
+					}
+				}
+				return ranges
+			}(),
 		})
 	})
 

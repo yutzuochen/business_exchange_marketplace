@@ -119,8 +119,45 @@ func (h *ListingsHandler) Get(c *gin.Context) {
 	// Increment view count
 	h.DB.Model(&listing).Update("view_count", listing.ViewCount+1)
 
+	// Add price range to listing
+	low := int64(float64(listing.Price) * 0.85)
+	high := int64(float64(listing.Price) * 1.15)
+
+	listingWithRange := gin.H{
+		"id":                  listing.ID,
+		"title":               listing.Title,
+		"description":         listing.Description,
+		"price":               listing.Price,
+		"category":            listing.Category,
+		"condition":           listing.Condition,
+		"location":            listing.Location,
+		"status":              listing.Status,
+		"owner_id":            listing.OwnerID,
+		"view_count":          listing.ViewCount,
+		"created_at":          listing.CreatedAt,
+		"updated_at":          listing.UpdatedAt,
+		"brand_story":         listing.BrandStory,
+		"rent":                listing.Rent,
+		"floor":               listing.Floor,
+		"equipment":           listing.Equipment,
+		"decoration":          listing.Decoration,
+		"annual_revenue":      listing.AnnualRevenue,
+		"gross_profit_rate":   listing.GrossProfitRate,
+		"fastest_moving_date": listing.FastestMovingDate,
+		"phone_number":        listing.PhoneNumber,
+		"square_meters":       listing.SquareMeters,
+		"industry":            listing.Industry,
+		"deposit":             listing.Deposit,
+		"owner":               listing.Owner,
+		"images":              listing.Images,
+		"price_range": gin.H{
+			"low":  low,
+			"high": high,
+		},
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"listing": listing,
+		"listing": listingWithRange,
 	})
 }
 
@@ -131,7 +168,7 @@ func (h *ListingsHandler) List(c *gin.Context) {
 
 	// Parse query parameters
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))
 	category := c.Query("category")
 	location := c.Query("location")
 	minPrice, _ := strconv.ParseInt(c.Query("min_price"), 10, 64)
@@ -182,8 +219,48 @@ func (h *ListingsHandler) List(c *gin.Context) {
 		return
 	}
 
+	// Add price ranges to listings
+	listingsWithRanges := make([]gin.H, len(listings))
+	for i, listing := range listings {
+		low := int64(float64(listing.Price) * 0.85)
+		high := int64(float64(listing.Price) * 1.15)
+
+		listingsWithRanges[i] = gin.H{
+			"id":                  listing.ID,
+			"title":               listing.Title,
+			"description":         listing.Description,
+			"price":               listing.Price,
+			"category":            listing.Category,
+			"condition":           listing.Condition,
+			"location":            listing.Location,
+			"status":              listing.Status,
+			"owner_id":            listing.OwnerID,
+			"view_count":          listing.ViewCount,
+			"created_at":          listing.CreatedAt,
+			"updated_at":          listing.UpdatedAt,
+			"brand_story":         listing.BrandStory,
+			"rent":                listing.Rent,
+			"floor":               listing.Floor,
+			"equipment":           listing.Equipment,
+			"decoration":          listing.Decoration,
+			"annual_revenue":      listing.AnnualRevenue,
+			"gross_profit_rate":   listing.GrossProfitRate,
+			"fastest_moving_date": listing.FastestMovingDate,
+			"phone_number":        listing.PhoneNumber,
+			"square_meters":       listing.SquareMeters,
+			"industry":            listing.Industry,
+			"deposit":             listing.Deposit,
+			"owner":               listing.Owner,
+			"images":              listing.Images,
+			"price_range": gin.H{
+				"low":  low,
+				"high": high,
+			},
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"listings": listings,
+		"listings": listingsWithRanges,
 		"pagination": gin.H{
 			"page":        page,
 			"limit":       limit,
