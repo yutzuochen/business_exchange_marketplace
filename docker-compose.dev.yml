@@ -1,30 +1,6 @@
 version: '3.8'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    ports:
-      - "8080:8080"
-    environment:
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_USER=app
-      - DB_PASSWORD=app_password
-      - DB_NAME=business_exchange
-      - REDIS_ADDR=redis:6379
-      - APP_PORT=8080
-      - APP_ENV=development
-    depends_on:
-      - mysql
-      - redis
-    volumes:
-      - .:/app          # 掛載源碼目錄
-      - /app/server     # 排除二進制文件
-    networks:
-      - business_exchange_network
-
   mysql:
     image: mysql:8.0
     environment:
@@ -35,19 +11,80 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - business_exchange_network
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 15s
+      retries: 10
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
-    networks:
-      - business_exchange_network
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 15s
+      retries: 10
+
+  app:
+    build: .
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      APP_ENV: development
+      APP_PORT: 8080
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: app
+      DB_PASSWORD: app_password
+      DB_NAME: business_exchange
+      REDIS_ADDR: redis:6379
+      REDIS_DB: 0
+      REDIS_PASSWORD: ""
+      JWT_SECRET: changeme-super-secret
+      JWT_ISSUER: trade_company
+      JWT_EXPIRE_MINUTES: 60
+    ports:
+      - "8080:8080"
+    volumes:
+      # For development: mount source code for hot reload
+      - .:/app
+      - /app/bin
+    command: go run ./cmd/server
+
+  frontend:
+    build:
+      context: ../business_exchange_marketplace_frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+    depends_on:
+      - app
+    volumes:
+      # For development: mount source code for hot reload
+      - ../business_exchange_marketplace_frontend:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+
+  adminer:
+    image: adminer:4
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysql
 
 volumes:
-  mysql_data:
+  db_data:
 
 networks:
   business_exchange_network:
