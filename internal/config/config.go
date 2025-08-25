@@ -31,6 +31,40 @@ type Config struct {
 	CORSAllowedOrigins string
 	CORSAllowedMethods string
 	CORSAllowedHeaders string
+
+	// Members service configuration
+	SendGridAPIKey    string
+	SendGridFromEmail string
+	SendGridFromName  string
+
+	// Session management
+	SessionSecret         string
+	SessionTTLMinutes     int
+	SessionCookieDomain   string
+	SessionCookieSecure   bool
+	SessionCookieHttpOnly bool
+	SessionCookieSameSite string
+
+	// Rate limiting
+	RateLimitLoginPerMinute        int
+	RateLimitSignupPerHour         int
+	RateLimitForgotPasswordPerHour int
+	RateLimitContactSellerPerHour  int
+
+	// Security
+	PasswordMinLength      int
+	MaxLoginAttempts       int
+	LockoutDurationMinutes int
+
+	// 2FA
+	TwoFactorIssuer string
+
+	// File upload limits
+	MaxFileSizeMB      int
+	MaxTotalSizeMB     int
+	MaxFilesPerRequest int
+	MaxAvatarSizeMB    int
+	GlobalBodyLimitMB  int
 }
 
 func Load() (*Config, error) {
@@ -67,6 +101,41 @@ func Load() (*Config, error) {
 	cfg.CORSAllowedOrigins = getEnv("CORS_ALLOWED_ORIGINS", "*")
 	cfg.CORSAllowedMethods = getEnv("CORS_ALLOWED_METHODS", "GET,POST,PUT,PATCH,DELETE,OPTIONS")
 	cfg.CORSAllowedHeaders = getEnv("CORS_ALLOWED_HEADERS", "Origin,Content-Type,Accept,Authorization")
+
+	// Members service configuration
+	cfg.SendGridAPIKey = getEnv("SENDGRID_API_KEY", "")
+	cfg.SendGridFromEmail = getEnv("SENDGRID_FROM_EMAIL", "noreply@business-exchange.com")
+	cfg.SendGridFromName = getEnv("SENDGRID_FROM_NAME", "Business Exchange")
+
+	// Session management
+	cfg.SessionSecret = getEnv("SESSION_SECRET", "changeme-session-secret")
+	cfg.SessionTTLMinutes = getEnvInt("SESSION_TTL_MINUTES", 1440) // 24 hours
+	cfg.SessionCookieDomain = getEnv("SESSION_COOKIE_DOMAIN", "")
+	cfg.SessionCookieSecure = getEnvBool("SESSION_COOKIE_SECURE", true)
+	cfg.SessionCookieHttpOnly = getEnvBool("SESSION_COOKIE_HTTP_ONLY", true)
+	cfg.SessionCookieSameSite = getEnv("SESSION_COOKIE_SAME_SITE", "Lax")
+
+	// Rate limiting
+	cfg.RateLimitLoginPerMinute = getEnvInt("RATE_LIMIT_LOGIN_PER_MINUTE", 5)
+	cfg.RateLimitSignupPerHour = getEnvInt("RATE_LIMIT_SIGNUP_PER_HOUR", 3)
+	cfg.RateLimitForgotPasswordPerHour = getEnvInt("RATE_LIMIT_FORGOT_PASSWORD_PER_HOUR", 3)
+	cfg.RateLimitContactSellerPerHour = getEnvInt("RATE_LIMIT_CONTACT_SELLER_PER_HOUR", 10)
+
+	// Security
+	cfg.PasswordMinLength = getEnvInt("PASSWORD_MIN_LENGTH", 8)
+	cfg.MaxLoginAttempts = getEnvInt("MAX_LOGIN_ATTEMPTS", 5)
+	cfg.LockoutDurationMinutes = getEnvInt("LOCKOUT_DURATION_MINUTES", 30)
+
+	// 2FA
+	cfg.TwoFactorIssuer = getEnv("TWO_FACTOR_ISSUER", "Business Exchange")
+
+	// File upload limits
+	cfg.MaxFileSizeMB = getEnvInt("MAX_FILE_SIZE_MB", 5)
+	cfg.MaxTotalSizeMB = getEnvInt("MAX_TOTAL_SIZE_MB", 25)
+	cfg.MaxFilesPerRequest = getEnvInt("MAX_FILES_PER_REQUEST", 10)
+	cfg.MaxAvatarSizeMB = getEnvInt("MAX_AVATAR_SIZE_MB", 1)
+	cfg.GlobalBodyLimitMB = getEnvInt("GLOBAL_BODY_LIMIT_MB", 30)
+
 	return cfg, nil
 }
 
@@ -92,6 +161,15 @@ func getEnvInt(key string, def int) int {
 	if v := os.Getenv(key); v != "" {
 		if i, err := strconv.Atoi(v); err == nil {
 			return i
+		}
+	}
+	return def
+}
+
+func getEnvBool(key string, def bool) bool {
+	if v := os.Getenv(key); v != "" {
+		if b, err := strconv.ParseBool(v); err == nil {
+			return b
 		}
 	}
 	return def
