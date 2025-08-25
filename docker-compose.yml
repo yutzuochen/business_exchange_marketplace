@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   mysql:
     image: mysql:8.0
@@ -51,6 +50,26 @@ services:
       JWT_EXPIRE_MINUTES: 60
     ports:
       - "8080:8080"
+
+  frontend:
+    build:
+      context: ../business_exchange_marketplace_frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8080
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+    depends_on:
+      - app
+    volumes:
+      # For development: mount source code for hot reload
+      - ../business_exchange_marketplace_frontend:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
 
   adminer:
     image: adminer:4

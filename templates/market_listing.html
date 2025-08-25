@@ -39,7 +39,7 @@
             </div>
             <div class="p-4">
               <div class="aspect-[4/3] bg-gray-100 rounded flex items-center justify-center text-gray-400">
-                主要圖片位
+                主要圖片位置
               </div>
               <div class="grid grid-cols-4 gap-2 mt-3">
                 {{ range .images }}
@@ -56,7 +56,7 @@
 
           <div class="bg-white rounded shadow mt-6">
             <div class="p-4 border-b font-semibold">品牌故事</div>
-            <div class="p-4 text-gray-500">（待補內容）</div>
+            <div class="p-4 text-gray-700 whitespace-pre-wrap">{{ if .listing.BrandStory }}{{ .listing.BrandStory }}{{ else }}（待補內容）{{ end }}</div>
           </div>
         </section>
 
@@ -64,18 +64,18 @@
         <aside>
           <div class="bg-white rounded shadow p-4">
             <div class="text-3xl font-extrabold text-red-600">${{ .listing.Price }}</div>
-            <div class="mt-2 text-sm text-gray-600">聯絡電話：<span class="font-mono">0911-XXXXXX</span></div>
+            <div class="mt-2 text-sm text-gray-600">聯絡電話：<span class="font-mono">{{ if .listing.PhoneNumber }}{{ .listing.PhoneNumber }}{{ else }}0911-XXXXXX{{ end }}</span></div>
             <dl class="mt-4 divide-y">
-              <div class="py-2 flex justify-between"><dt class="text-gray-600">行業</dt><dd>店面/餐飲</dd></div>
-              <div class="py-2 flex justify-between"><dt class="text-gray-600">租金</dt><dd>—</dd></div>
-              <div class="py-2 flex justify-between"><dt class="text-gray-600">坪數</dt><dd>—</dd></div>
-              <div class="py-2 flex justify-between"><dt class="text-gray-600">樓層</dt><dd>—</dd></div>
-              <div class="py-2 flex justify-between"><dt class="text-gray-600">地址</dt><dd>{{ .listing.Location }}</dd></div>
-              <div class="py-2 flex justify-between"><dt class="text-gray-600">設備裝潢</dt><dd>—</dd></div>
-              <div class="py-2 flex justify-between"><dt class="text-gray-600">創始年份</dt><dd>{{ .listing.CreatedAt }}</dd></div>
-              <div class="py-2 flex justify-between"><dt class="text-gray-600">年營業額</dt><dd>—</dd></div>
-              <div class="py-2 flex justify-between"><dt class="text-gray-600">毛利率</dt><dd>—</dd></div>
-              <div class="py-2 flex justify-between"><dt class="text-gray-600">最快遷入日</dt><dd>—</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">行業</dt><dd>{{ if .listing.Industry }}{{ .listing.Industry }}{{ else }}---{{ end }}</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">租金</dt><dd>{{ if .listing.Rent }}{{ if gt .listing.Rent 0 }}${{ .listing.Rent }}{{ else }}---{{ end }}{{ else }}---{{ end }}</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">坪數</dt><dd>{{ if .listing.SquareMeters }}{{ if gt .listing.SquareMeters 0 }}{{ .listing.SquareMeters }}㎡{{ else }}---{{ end }}{{ else }}---{{ end }}</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">樓層</dt><dd>{{ if .listing.Floor }}{{ if gt .listing.Floor 0 }}{{ .listing.Floor }}F{{ else }}---{{ end }}{{ else }}---{{ end }}</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">地址</dt><dd>{{ if .listing.Location }}{{ .listing.Location }}{{ else }}---{{ end }}</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">設備裝潢</dt><dd>{{ if .listing.Equipment }}{{ .listing.Equipment }}{{ else }}---{{ end }}</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">創始年</dt><dd>{{ .listing.CreatedAt.Format "2006" }}</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">年營業額</dt><dd>{{ if .listing.AnnualRevenue }}{{ if gt .listing.AnnualRevenue 0 }}${{ .listing.AnnualRevenue }}{{ else }}---{{ end }}{{ else }}---{{ end }}</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">毛利率</dt><dd>{{ if .listing.GrossProfitRate }}{{ if gt .listing.GrossProfitRate 0 }}{{ .listing.GrossProfitRate }}%{{ else }}---{{ end }}{{ else }}---{{ end }}</dd></div>
+              <div class="py-2 flex justify-between"><dt class="text-gray-600">最快遷入日</dt><dd>{{ if .listing.FastestMovingDate }}{{ if not .listing.FastestMovingDate.IsZero }}{{ .listing.FastestMovingDate.Format "2006-01-02" }}{{ else }}---{{ end }}{{ else }}---{{ end }}</dd></div>
             </dl>
             <div class="mt-4">
               <a href="/market" class="inline-flex items-center px-4 py-2 rounded bg-blue-600 text-white">回到列表</a>
@@ -85,6 +85,6 @@
       </div>
     </main>
   </body>
-  </html>
+</html>
 
 

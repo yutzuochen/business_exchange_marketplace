@@ -4,6 +4,7 @@
 **Target Market**: Taiwanese business owners and entrepreneurs  
 **Platform**: BizBuySell-style business exchange marketplace  
 **Deployment**: Google Cloud Run + Google Cloud SQL  
+**Branch**: feat/nextJS  
 
 ---
 
@@ -370,4 +371,5 @@ POST /graphql - GraphQL queries and mutations
 
 *Last Updated: December 2024*  
 *Document Version: 1.0*  
+*Branch: feat/nextJS*  
 *Maintained by: Development Team*

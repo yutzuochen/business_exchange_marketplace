@@ -1,6 +1,7 @@
 package router
 
 import (
+	logOri "log"
 	"net/http"
 	"strings"
 	"time"
@@ -28,62 +29,80 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 	} else {
 		gin.SetMode(gin.DebugMode)
 	}
-	
+
 	r := gin.New()
-	
+
 	// Global middleware
 	r.Use(middleware.Recovery(log))
 	r.Use(middleware.RequestID())
 	r.Use(middleware.CORS())
 	r.Use(requestLogger(log))
-	
+
 	// Load templates
 	r.LoadHTMLGlob("templates/*.html")
-	
+
 	// Static files
 	r.Static("/static", "./static")
 	r.Static("/uploads", "./uploads")
-	
+
 	// Health check
-	r.GET("/healthz", func(c *gin.Context) { 
+	r.GET("/healthz", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"status": "ok",
-			"timestamp": time.Now().UTC(),
+			"status":     "ok",
+			"timestamp":  time.Now().UTC(),
 			"request_id": c.GetString("request_id"),
-		}) 
+		})
 	})
-	
+
 	// Public pages
 	r.GET("/", func(c *gin.Context) {
 		var txs []models.Transaction
-		_ = db.Order("created_at desc").Limit(10).Find(&txs).Error
-
 		var listings []models.Listing
-		_ = db.Order("id desc").Limit(8).Find(&listings).Error
+
+		if db != nil {
+			_ = db.Order("created_at desc").Limit(10).Find(&txs).Error
+			_ = db.Order("id desc").Limit(8).Find(&listings).Error
+		}
 
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"transactions": txs,
 			"listings":     listings,
 		})
 	})
-	
+
 	r.GET("/market", func(c *gin.Context) {
 		var txs []models.Transaction
-		_ = db.Order("created_at desc").Limit(10).Find(&txs).Error
-
 		var listings []models.Listing
-		_ = db.Order("id desc").Limit(8).Find(&listings).Error
+
+		if db != nil {
+			_ = db.Order("created_at desc").Limit(10).Find(&txs).Error
+			_ = db.Order("id desc").Limit(8).Find(&listings).Error
+		}
 
 		c.HTML(http.StatusOK, "market_home.html", gin.H{
 			"transactions": txs,
 			"listings":     listings,
+			"listingPriceRanges": func() []map[string]interface{} {
+				ranges := make([]map[string]interface{}, len(listings))
+				for i, l := range listings {
+					low := int64(float64(l.Price) * 0.85)
+					high := int64(float64(l.Price) * 1.15)
+					ranges[i] = map[string]interface{}{
+						"id":    l.ID,
+						"low":   low,
+						"high":  high,
+						"price": l.Price,
+					}
+				}
+				return ranges
+			}(),
 		})
 	})
 
 	// Search listing by title and redirect to detail page if found
 	r.GET("/market/search", func(c *gin.Context) {
 		q := c.Query("q")
-		if q == "" {
+		if q == "" || db == nil {
 			c.Redirect(http.StatusFound, "/market")
 			return
 		}
@@ -98,6 +117,10 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 	// Listing detail page
 	r.GET("/market/listings/:id", func(c *gin.Context) {
 		idStr := c.Param("id")
+		if db == nil {
+			c.String(http.StatusServiceUnavailable, "database not available")
+			return
+		}
 		var ls models.Listing
 		if err := db.First(&ls, idStr).Error; err != nil {
 			c.String(http.StatusNotFound, "listing not found")
@@ -105,12 +128,14 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 		}
 		var images []models.Image
 		_ = db.Where("listing_id = ?", ls.ID).Order("id asc").Find(&images).Error
+		// log.Printf("Go syntax: %#v\n", p)
+		logOri.Printf("===== LS: %+v\n", ls)
 		c.HTML(http.StatusOK, "market_listing.html", gin.H{
 			"listing": ls,
 			"images":  images,
 		})
 	})
-	
+
 	r.GET("/login", func(c *gin.Context) { c.HTML(http.StatusOK, "login.html", nil) })
 	r.GET("/register", func(c *gin.Context) { c.HTML(http.StatusOK, "register.html", nil) })
 	r.GET("/dashboard", func(c *gin.Context) { c.HTML(http.StatusOK, "dashboard.html", nil) })
@@ -121,7 +146,7 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 	userH := &handlers.UserHandler{DB: db}
 	favH := &handlers.FavoriteHandler{DB: db}
 	msgH := &handlers.MessageHandler{DB: db}
-	
+
 	api := r.Group("/api/v1")
 	{
 		// Public endpoints
@@ -130,7 +155,7 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 		api.GET("/listings", listH.List)
 		api.GET("/listings/:id", listH.Get)
 		api.GET("/categories", listH.GetCategories)
-		
+
 		// Protected endpoints
 		authd := api.Group("")
 		authd.Use(middleware.JWT(middleware.JWTConfig{
@@ -142,18 +167,18 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 			authd.GET("/user/profile", userH.GetProfile)
 			authd.PUT("/user/profile", userH.UpdateProfile)
 			authd.PUT("/user/password", userH.ChangePassword)
-			
+
 			// Listings
 			authd.POST("/listings", listH.Create)
 			authd.PUT("/listings/:id", listH.Update)
 			authd.DELETE("/listings/:id", listH.Delete)
 			authd.POST("/listings/:id/images", listH.UploadImages)
-			
+
 			// Favorites
 			authd.GET("/favorites", favH.List)
 			authd.POST("/favorites", favH.Add)
 			authd.DELETE("/favorites/:id", favH.Remove)
-			
+
 			// Messages
 			authd.GET("/messages", msgH.List)
 			authd.GET("/messages/:id", msgH.Get)
@@ -184,12 +209,12 @@ func requestLogger(log *zap.Logger) gin.HandlerFunc {
 		start := time.Now()
 		c.Next()
 		dur := time.Since(start)
-		
+
 		requestID := c.GetString("request_id")
 		if requestID == "" {
 			requestID = "unknown"
 		}
-		
+
 		log.Info("request",
 			zap.String("request_id", requestID),
 			zap.String("method", c.Request.Method),

@@ -5,6 +5,7 @@
 - **Frontend**: Next.js + TypeScript + Tailwind CSS
 - **Deployment**: Google Cloud Run + Cloud SQL
 - **Brand**: 567 我來接 (567 I'll Take It)
+- **Branch**: feat/nextJS
 
 ## 🔑 **Key Commands**
 
@@ -227,6 +228,15 @@ GET /api/v1/listings?category=餐飲業&location=台北市&min_price=1000000&max
 - [ ] Check image uploads work
 - [ ] Test search functionality
 
+## 🔄 **Branch-Specific Notes**
+
+### **feat/nextJS Branch**
+- **Focus**: Next.js frontend integration
+- **Status**: Development in progress
+- **Key Changes**: Modern React components, TypeScript interfaces
+- **Integration**: API client for backend communication
+
 ---
 
-*This is a living document - update as needed during development*
+*This is a living document - update as needed during development*  
+*Branch: feat/nextJS*

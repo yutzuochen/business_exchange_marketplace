@@ -1,0 +1,30 @@
+# Development Dockerfile for Go backend
+FROM golang:1.23-alpine
+
+# Install development tools
+RUN apk add --no-cache git ca-certificates tzdata
+
+# Set working directory
+WORKDIR /app
+
+# Install air for hot reload (use compatible version)
+RUN go install github.com/cosmtrek/air@v1.49.0
+
+# Copy go mod files
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Expose port
+EXPOSE 8080
+
+# Set environment variables for development
+ENV APP_ENV=development
+ENV PORT=8080
+
+# Run with hot reload using air, or fallback to go run with disabled VCS
+CMD ["sh", "-c", "if command -v air > /dev/null; then air; else go run -buildvcs=false ./cmd/server; fi"]
