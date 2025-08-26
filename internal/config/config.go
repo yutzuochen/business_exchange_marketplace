@@ -18,6 +18,7 @@ type Config struct {
 	DBName         string
 	DBMaxIdleConns int
 	DBMaxOpenConns int
+	Params         map[string]string
 
 	RedisAddr              string
 	RedisPassword          string
@@ -87,6 +88,15 @@ func Load() (*Config, error) {
 	cfg.DBName = getEnv("DB_NAME", "business_exchange")
 	cfg.DBMaxIdleConns = getEnvInt("DB_MAX_IDLE_CONNS", 10)
 	cfg.DBMaxOpenConns = getEnvInt("DB_MAX_OPEN_CONNS", 50)
+	// cfg.Params = map[string]string{
+	//     "parseTime":      "true",
+	//     "charset":        "utf8mb4",
+	//     "loc":            "Local",
+	//     "timeout":        "30s",
+	//     "readTimeout":    "30s",
+	//     "writeTimeout":   "30s",
+	//     "multiStatements":"true", // 關鍵
+	// }
 
 	// empty by default so Redis is optional in environments without it
 	cfg.RedisAddr = getEnv("REDIS_ADDR", "")

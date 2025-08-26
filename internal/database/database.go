@@ -74,7 +74,7 @@ func SeedData(db *gorm.DB) error {
 	// }
 
 	// Clear existing data first
-	log.Println("Clearing existing data...")
+	log.Println("[Initializing -> SeedData] Clearing existing data...")
 	db.Exec("DELETE FROM transactions")
 	db.Exec("DELETE FROM messages")
 	db.Exec("DELETE FROM favorites")

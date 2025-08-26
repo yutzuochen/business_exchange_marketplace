@@ -1,49 +1,50 @@
-# Build stage
-FROM golang:1.23-alpine as builder
+# syntax=docker/dockerfile:1.7
 
-# Install build dependencies
+########################
+# 1) Build stage
+########################
+FROM golang:1.23-alpine AS builder
+WORKDIR /src
+
+# 基本工具
 RUN apk add --no-cache git ca-certificates tzdata
 
-WORKDIR /app
-
-# Copy go mod files
+# 先複製模組檔以利用快取
 COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download
 
-# Download dependencies
-RUN go mod download
-
-# Copy source code
+# 再複製其餘程式碼
 COPY . .
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o server ./cmd/server/main.go
+# 版本資訊（可選）
+ARG VERSION=dev
+ARG COMMIT=none
+ARG DATE=unknown
 
-# Runtime stage
-FROM alpine:latest
+# 建置（依你的 main 調整：常見為 ./cmd/server）
+ENV CGO_ENABLED=0
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    go build -trimpath -ldflags="-s -w -X main.version=${VERSION} -X main.commit=${COMMIT} -X main.date=${DATE}" \
+      -o /out/server ./cmd/server
 
-# Install ca-certificates for HTTPS requests
-RUN apk --no-cache add ca-certificates
-
+########################
+# 2) Runtime stage
+########################
+FROM alpine:3.20 AS runner
+RUN apk add --no-cache ca-certificates tzdata
 WORKDIR /app
 
-# Copy the binary from builder stage
-COPY --from=builder /app/server .
+# 非 root 使用者
+RUN addgroup -S app && adduser -S -G app -u 10001 app
+COPY --from=builder /out/server /app/server
 
-# Copy templates and migrations if they exist
-COPY --from=builder /app/templates ./templates
-COPY --from=builder /app/migrations ./migrations
+ENV APP_ENV=production \
+    GIN_MODE=release \
+    PORT=8080 \
+    TZ=Asia/Taipei
 
-# Create non-root user
-RUN adduser -D -g '' appuser
-RUN chown -R appuser:appuser /app
-USER appuser
-
-# Expose port
+USER app
 EXPOSE 8080
-
-# Set environment variables
-ENV APP_ENV=production
-ENV PORT=8080
-
-# Run the application
-CMD ["./server"] 
+CMD ["/app/server"]

@@ -62,7 +62,7 @@ func main() {
 
 		// 運行數據庫遷移
 		if err := database.RunMigrations(db); err != nil {
-			zapLogger.Error("database migrations failed", logger.Err(err))
+			zapLogger.Error("database migrations failed :( )", logger.Err(err))
 		} else {
 			zapLogger.Info("數據庫遷移完成")
 		}

@@ -1,30 +1,25 @@
-# Development Dockerfile for Go backend
-FROM golang:1.23-alpine
+# syntax=docker/dockerfile:1.7
 
-# Install development tools
-RUN apk add --no-cache git ca-certificates tzdata
-
-# Set working directory
+# Dev stage（compose 的 build.target: dev 會指向這裡）
+FROM golang:1.24-alpine AS dev
 WORKDIR /app
 
-# Install air for hot reload (use compatible version)
-RUN go install github.com/cosmtrek/air@v1.49.0
+RUN apk add --no-cache git curl ca-certificates tzdata
+ENV GO111MODULE=on \
+    GOCACHE=/go/cache \
+    CGO_ENABLED=0 \
+    PATH="/go/bin:${PATH}"
 
-# Copy go mod files
+# 熱重載（新維護倉庫）
+RUN go install github.com/air-verse/air@latest
+
+# 先快取依賴
 COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod go mod download
 
-# Download dependencies
-RUN go mod download
-
-# Copy source code
+# 程式碼（dev 時會用 bind mount 蓋掉，仍保留可獨立啟動）
 COPY . .
 
-# Expose port
 EXPOSE 8080
-
-# Set environment variables for development
-ENV APP_ENV=development
-ENV PORT=8080
-
-# Run with hot reload using air, or fallback to go run with disabled VCS
-CMD ["sh", "-c", "if command -v air > /dev/null; then air; else go run -buildvcs=false ./cmd/server; fi"]
+# 預設用 air；若你有 .air.toml，compose 可不用覆蓋 command
+CMD ["air", "-c", ".air.toml"]

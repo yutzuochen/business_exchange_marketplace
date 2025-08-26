@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"trade_company/internal/config"
 
@@ -22,9 +23,18 @@ func RunMigrations(db *gorm.DB) error {
 	if err != nil {
 		return fmt.Errorf("failed to load config for migrations: %w", err)
 	}
-
+	dsn := cfg.MySQLDSN()
+	if !strings.Contains(dsn, "multiStatements=") {
+		if strings.Contains(dsn, "?") {
+			dsn += "&multiStatements=true"
+		} else {
+			dsn += "?multiStatements=true"
+		}
+	}
+	// migrationDB, err := sql.Open("mysql", dsn)
+	migrationDB, err := sql.Open("mysql", migrationDSN(cfg))
 	// Create a separate database connection for migrations
-	migrationDB, err := sql.Open("mysql", cfg.MySQLDSN())
+	// migrationDB, err := sql.Open("mysql", cfg.MySQLDSN())
 	if err != nil {
 		return fmt.Errorf("failed to open migration database: %w", err)
 	}
@@ -85,7 +95,8 @@ func RollbackMigrations(db *gorm.DB) error {
 	}
 
 	// Create a separate database connection for migrations
-	migrationDB, err := sql.Open("mysql", cfg.MySQLDSN())
+	// migrationDB, err := sql.Open("mysql", cfg.MySQLDSN())
+	migrationDB, err := sql.Open("mysql", migrationDSN(cfg))
 	if err != nil {
 		return fmt.Errorf("failed to open migration database: %w", err)
 	}
@@ -221,4 +232,16 @@ func ForceVersion(db *gorm.DB, version int) error {
 
 	log.Printf("Successfully forced migration version to %d", version)
 	return nil
+}
+
+func migrationDSN(cfg *config.Config) string {
+	dsn := cfg.MySQLDSN()
+	if !strings.Contains(dsn, "multiStatements=") {
+		if strings.Contains(dsn, "?") {
+			dsn += "&multiStatements=true"
+		} else {
+			dsn += "?multiStatements=true"
+		}
+	}
+	return dsn
 }
