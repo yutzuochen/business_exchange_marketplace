@@ -1,0 +1,64 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+DEPLOYMENT_CHECKLIST.md
+
+# Development files
+.env
+.env.*
+!env.production
+
+# IDE
+.vscode
+.idea
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+.tmp
+
+# Node modules (if any)
+node_modules/
+
+# Go build cache
+.cache
+
+# Test files
+*_test.go
+test/
+tests/
+
+# Development scripts
+docker-compose*.yml
+!docker-compose.yml
+
+# CI/CD (but keep GitHub Actions)
+# .github/
+
+# Local development
+.air.toml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Uploads (will be created at runtime)
+uploads/*
+!uploads/.gitkeep
+
+# Build artifacts
+bin/
+dist/
+build/
+
+# Keep important files
+!/templates/
+!/static/
+!/migrations/

@@ -58,8 +58,8 @@ if [ $? -eq 0 ]; then
             --memory 1Gi \
             --cpu 1 \
             --max-instances 10 \
-            --set-env-vars "APP_ENV=production,APP_NAME=BusinessExchange,DB_HOST=127.0.0.1,DB_PORT=3306,DB_USER=app,DB_PASSWORD=app_password,DB_NAME=business_exchange,CLOUDSQL_CONNECTION_NAME=${PROJECT_ID}:${REGION}-c:trade-sql" \
-            --add-cloudsql-instances ${PROJECT_ID}:${REGION}-c:trade-sql
+            --set-env-vars "APP_ENV=production,APP_NAME=BusinessExchange,DB_HOST=/cloudsql/${PROJECT_ID}:${REGION}:trade-sql,DB_USER=app,DB_PASSWORD=app_password,DB_NAME=business_exchange,JWT_SECRET=your-production-jwt-secret-change-me" \
+            --add-cloudsql-instances ${PROJECT_ID}:${REGION}:trade-sql
         
         if [ $? -eq 0 ]; then
             echo "✅ 後端部署成功！"

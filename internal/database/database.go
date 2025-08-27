@@ -58,7 +58,7 @@ func Connect(cfg *config.Config, _ any) (*gorm.DB, error) {
 // }
 
 // SeedData adds sample data to the database for testing
-func SeedData(db *gorm.DB) error {
+func SeedData(db *gorm.DB, cfg *config.Config) error {
 	log.Println("Seeding database with sample data...")
 
 	// Check if users already exist
@@ -910,7 +910,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[0].ID,
 			Filename:  "happy_coffee.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/happy_coffee.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/happy_coffee.jpg",
 			AltText:   "快樂咖啡館",
 			Order:     0,
 			IsPrimary: true,
@@ -919,7 +919,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[1].ID,
 			Filename:  "pet_grooming.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/pet_grooming.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/pet_grooming.jpg",
 			AltText:   "寵物美容：美容台與設備",
 			Order:     0,
 			IsPrimary: true,
@@ -928,7 +928,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[2].ID,
 			Filename:  "nail_salon.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/nail_salon.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/nail_salon.jpg",
 			AltText:   "髮藝沙龍：造型座位區",
 			Order:     0,
 			IsPrimary: true,
@@ -937,7 +937,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[3].ID,
 			Filename:  "bakery.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/bakery.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/bakery.jpg",
 			AltText:   "烘焙坊：麵包陳列櫃",
 			Order:     0,
 			IsPrimary: true,
@@ -946,7 +946,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[4].ID,
 			Filename:  "photo_studio.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/photo_studio.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/photo_studio.jpg",
 			AltText:   "創客空間：工作檯與設備",
 			Order:     0,
 			IsPrimary: true,
@@ -955,7 +955,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[5].ID,
 			Filename:  "bento_shop.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/bento_shop.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/bento_shop.jpg",
 			AltText:   "便當店：餐盒展示",
 			Order:     0,
 			IsPrimary: true,
@@ -964,7 +964,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[6].ID,
 			Filename:  "dessert_shop.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/dessert_shop.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/dessert_shop.jpg",
 			AltText:   "豆花店：甜品陳列",
 			Order:     0,
 			IsPrimary: true,
@@ -973,7 +973,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[7].ID,
 			Filename:  "toy_store.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/toy_store.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/toy_store.jpg",
 			AltText:   "玩具店：商品陳列",
 			Order:     0,
 			IsPrimary: true,
@@ -982,7 +982,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[8].ID,
 			Filename:  "dry_cleaning.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/dry_cleaning.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/dry_cleaning.jpg",
 			AltText:   "乾洗店：洗衣設備",
 			Order:     0,
 			IsPrimary: true,
@@ -991,7 +991,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[9].ID,
 			Filename:  "scooter_shop.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/scooter_shop.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/scooter_shop.jpg",
 			AltText:   "機車行：維修區",
 			Order:     0,
 			IsPrimary: true,
@@ -1000,7 +1000,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[10].ID,
 			Filename:  "stationery_store.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/stationery_store.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/stationery_store.jpg",
 			AltText:   "文具行：商品陳列",
 			Order:     0,
 			IsPrimary: true,
@@ -1009,7 +1009,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[11].ID,
 			Filename:  "yoga_studio.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/yoga_studio.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/yoga_studio.jpg",
 			AltText:   "瑜珈教室：練習空間",
 			Order:     0,
 			IsPrimary: true,
@@ -1018,7 +1018,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[12].ID,
 			Filename:  "photo_studio.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/photo_studio.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/photo_studio.jpg",
 			AltText:   "攝影工作室：拍攝空間",
 			Order:     0,
 			IsPrimary: true,
@@ -1027,7 +1027,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[13].ID,
 			Filename:  "hotel_room.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/hotel_room.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/hotel_room.jpg",
 			AltText:   "旅店：客房環境",
 			Order:     0,
 			IsPrimary: true,
@@ -1036,7 +1036,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[14].ID,
 			Filename:  "seafood_market.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/seafood_market.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/seafood_market.jpg",
 			AltText:   "海鮮店：新鮮海產",
 			Order:     0,
 			IsPrimary: true,
@@ -1045,25 +1045,25 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[15].ID,
 			Filename:  "mountain_cafe.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/mountain_cafe.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/mountain_cafe.jpg",
 			AltText:   "山谷咖啡：景觀座位",
 			Order:     0,
 			IsPrimary: true,
 		},
-		{ListingID: listings[16].ID, Filename: "stationery_store.jpg", URL: "http://127.0.0.1:8080/static/images/listings/stationery_store.jpg", AltText: "文具店通道與貨架示意", Order: 0, IsPrimary: true},
-		{ListingID: listings[17].ID, Filename: "scooter_repair_shop.jpg", URL: "http://127.0.0.1:8080/static/images/listings/scooter_shop.jpg", AltText: "機車維修工位與工具示意", Order: 0, IsPrimary: true},
-		{ListingID: listings[18].ID, Filename: "dry_clean_shop.jpg", URL: "http://127.0.0.1:8080/static/images/listings/dry_cleaning.jpg", AltText: "洗烘併設的洗衣空間示意", Order: 0, IsPrimary: true},
-		{ListingID: listings[19].ID, Filename: "toy_store_aisle.jpg", URL: "http://127.0.0.1:8080/static/images/listings/toy_store.jpg", AltText: "玩具賣場走道與貨架示意", Order: 0, IsPrimary: true},
-		{ListingID: listings[20].ID, Filename: "douhua_shop.jpg", URL: "http://127.0.0.1:8080/static/images/listings/dessert_shop.jpg", AltText: "豆花甜品與內用座位示意", Order: 0, IsPrimary: true},
-		{ListingID: listings[21].ID, Filename: "bento_counter.jpg", URL: "http://127.0.0.1:8080/static/images/listings/bento_shop.jpg", AltText: "便當餐盒展示與出餐示意", Order: 0, IsPrimary: true},
-		{ListingID: listings[22].ID, Filename: "daycare_classroom.jpg", URL: "http://127.0.0.1:8080/static/images/listings/kindergarten.jpg", AltText: "幼兒教室與遊戲區示意", Order: 0, IsPrimary: true},
-		{ListingID: listings[23].ID, Filename: "hair_salon_interior.jpg", URL: "http://127.0.0.1:8080/static/images/listings/nail_salon.jpg", AltText: "髮廊工業風內裝與座位示意", Order: 0, IsPrimary: true},
-		{ListingID: listings[24].ID, Filename: "makerspace_workshop.jpg", URL: "http://127.0.0.1:8080/static/images/listings/photo_studio.jpg", AltText: "3D列印與手作空間示意", Order: 0, IsPrimary: true},
-		{ListingID: listings[25].ID, Filename: "bakery_storefront.jpg", URL: "http://127.0.0.1:8080/static/images/listings/bakery.jpg", AltText: "烘焙坊麵包陳列與店面示意", Order: 0, IsPrimary: true},
+		{ListingID: listings[16].ID, Filename: "stationery_store.jpg", URL: cfg.StaticBaseURL + "/static/images/listings/stationery_store.jpg", AltText: "文具店通道與貨架示意", Order: 0, IsPrimary: true},
+		{ListingID: listings[17].ID, Filename: "scooter_repair_shop.jpg", URL: cfg.StaticBaseURL + "/static/images/listings/scooter_shop.jpg", AltText: "機車維修工位與工具示意", Order: 0, IsPrimary: true},
+		{ListingID: listings[18].ID, Filename: "dry_clean_shop.jpg", URL: cfg.StaticBaseURL + "/static/images/listings/dry_cleaning.jpg", AltText: "洗烘併設的洗衣空間示意", Order: 0, IsPrimary: true},
+		{ListingID: listings[19].ID, Filename: "toy_store_aisle.jpg", URL: cfg.StaticBaseURL + "/static/images/listings/toy_store.jpg", AltText: "玩具賣場走道與貨架示意", Order: 0, IsPrimary: true},
+		{ListingID: listings[20].ID, Filename: "douhua_shop.jpg", URL: cfg.StaticBaseURL + "/static/images/listings/dessert_shop.jpg", AltText: "豆花甜品與內用座位示意", Order: 0, IsPrimary: true},
+		{ListingID: listings[21].ID, Filename: "bento_counter.jpg", URL: cfg.StaticBaseURL + "/static/images/listings/bento_shop.jpg", AltText: "便當餐盒展示與出餐示意", Order: 0, IsPrimary: true},
+		{ListingID: listings[22].ID, Filename: "daycare_classroom.jpg", URL: cfg.StaticBaseURL + "/static/images/listings/kindergarten.jpg", AltText: "幼兒教室與遊戲區示意", Order: 0, IsPrimary: true},
+		{ListingID: listings[23].ID, Filename: "hair_salon_interior.jpg", URL: cfg.StaticBaseURL + "/static/images/listings/nail_salon.jpg", AltText: "髮廊工業風內裝與座位示意", Order: 0, IsPrimary: true},
+		{ListingID: listings[24].ID, Filename: "makerspace_workshop.jpg", URL: cfg.StaticBaseURL + "/static/images/listings/photo_studio.jpg", AltText: "3D列印與手作空間示意", Order: 0, IsPrimary: true},
+		{ListingID: listings[25].ID, Filename: "bakery_storefront.jpg", URL: cfg.StaticBaseURL + "/static/images/listings/bakery.jpg", AltText: "烘焙坊麵包陳列與店面示意", Order: 0, IsPrimary: true},
 		{
 			ListingID: listings[26].ID,
 			Filename:  "pet_grooming_waiting_area.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/pet_grooming.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/pet_grooming.jpg",
 			AltText:   "寵物美容：明亮等待區與遊戲室",
 			Order:     0,
 			IsPrimary: true,
@@ -1071,7 +1071,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[27].ID,
 			Filename:  "self_service_car_wash.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/car_wash.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/car_wash.jpg",
 			AltText:   "自助洗車場：戶外洗車隔間",
 			Order:     0,
 			IsPrimary: true,
@@ -1079,7 +1079,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[28].ID,
 			Filename:  "eyeglass_store_interior.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/eyeglass_store.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/eyeglass_store.jpg",
 			AltText:   "眼鏡門市：展示區與鏡架",
 			Order:     0,
 			IsPrimary: true,
@@ -1087,7 +1087,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[29].ID,
 			Filename:  "hotpot_interior.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/hotpot_restaurant.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/hotpot_restaurant.jpg",
 			AltText:   "小火鍋店：內用空間與自助吧",
 			Order:     0,
 			IsPrimary: true,
@@ -1095,7 +1095,7 @@ func SeedData(db *gorm.DB) error {
 		{
 			ListingID: listings[30].ID,
 			Filename:  "tutoring_classroom.jpg",
-			URL:       "http://127.0.0.1:8080/static/images/listings/tutoring_center.jpg",
+			URL:       cfg.StaticBaseURL + "/static/images/listings/tutoring_center.jpg",
 			AltText:   "家教/補習班：電腦教室座位",
 			Order:     0,
 			IsPrimary: true,

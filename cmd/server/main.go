@@ -69,7 +69,7 @@ func main() {
 
 		// 只有在數據庫連接成功時才嘗試種子數據
 		zapLogger.Info("開始填充種子數據...")
-		if err := database.SeedData(db); err != nil {
+		if err := database.SeedData(db, cfg); err != nil {
 			zapLogger.Error("database seeding failed", logger.Err(err))
 		} else {
 			zapLogger.Info("種子數據填充完成")

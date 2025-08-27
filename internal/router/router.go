@@ -45,14 +45,16 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 	r.Static("/static", "./static")
 	r.Static("/uploads", "./uploads")
 
-	// Health check
-	r.GET("/healthz", func(c *gin.Context) {
+	// Health check endpoints
+	healthHandler := func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"status":     "ok",
 			"timestamp":  time.Now().UTC(),
 			"request_id": c.GetString("request_id"),
 		})
-	})
+	}
+	r.GET("/health", healthHandler)
+	r.GET("/healthz", healthHandler)
 
 	// Public pages
 	r.GET("/", func(c *gin.Context) {

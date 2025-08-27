@@ -66,6 +66,10 @@ type Config struct {
 	MaxFilesPerRequest int
 	MaxAvatarSizeMB    int
 	GlobalBodyLimitMB  int
+
+	// API 和靜態文件基礎 URL - 根據環境自動設置
+	APIBaseURL    string
+	StaticBaseURL string
 }
 
 func Load() (*Config, error) {
@@ -145,6 +149,17 @@ func Load() (*Config, error) {
 	cfg.MaxFilesPerRequest = getEnvInt("MAX_FILES_PER_REQUEST", 10)
 	cfg.MaxAvatarSizeMB = getEnvInt("MAX_AVATAR_SIZE_MB", 1)
 	cfg.GlobalBodyLimitMB = getEnvInt("GLOBAL_BODY_LIMIT_MB", 30)
+
+	// API 和靜態文件基礎 URL - 根據環境自動設置
+	if cfg.AppEnv == "production" {
+		// 生產環境：使用 Cloud Run 的 URL
+		cfg.APIBaseURL = getEnv("API_BASE_URL", "https://business-exchange-backend-430730011391.us-central1.run.app")
+		cfg.StaticBaseURL = getEnv("STATIC_BASE_URL", "https://business-exchange-backend-430730011391.us-central1.run.app")
+	} else {
+		// 本地環境：使用 localhost
+		cfg.APIBaseURL = getEnv("API_BASE_URL", "http://127.0.0.1:8080")
+		cfg.StaticBaseURL = getEnv("STATIC_BASE_URL", "http://127.0.0.1:8080")
+	}
 
 	return cfg, nil
 }

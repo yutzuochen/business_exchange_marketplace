@@ -38,7 +38,16 @@ WORKDIR /app
 
 # 非 root 使用者
 RUN addgroup -S app && adduser -S -G app -u 10001 app
+
+# 複製編譯好的應用程式
 COPY --from=builder /out/server /app/server
+
+# 複製模板和靜態文件
+COPY --from=builder /src/templates ./templates
+COPY --from=builder /src/static ./static
+
+# 創建上傳目錄
+RUN mkdir -p uploads && chown app:app uploads
 
 ENV APP_ENV=production \
     GIN_MODE=release \
