@@ -21,7 +21,7 @@ func main() {
 
 	// Run seed data
 	log.Println("Starting database seeding...")
-	if err := database.SeedData(db); err != nil {
+	if err := database.SeedData(db, cfg); err != nil {
 		log.Fatalf("Failed to seed database: %v", err)
 	}
 

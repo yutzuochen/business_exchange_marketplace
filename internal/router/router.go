@@ -143,7 +143,7 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 	r.GET("/dashboard", func(c *gin.Context) { c.HTML(http.StatusOK, "dashboard.html", nil) })
 
 	// REST API v1
-	authH := &handlers.AuthHandler{DB: db, Cfg: cfg}
+	authH := &handlers.AuthHandler{DB: db, Cfg: cfg, Log: log}
 	listH := &handlers.ListingsHandler{DB: db}
 	userH := &handlers.UserHandler{DB: db}
 	favH := &handlers.FavoriteHandler{DB: db}
