@@ -1,3 +1,5 @@
+// Package handlers provides HTTP request handlers for the Business Exchange Marketplace API.
+// This file contains authentication-related handlers for user registration and login.
 package handlers
 
 import (
@@ -14,22 +16,70 @@ import (
 	"gorm.io/gorm"
 )
 
+// AuthHandler handles authentication-related HTTP requests.
+// Provides endpoints for user registration, login, and token management.
+//
+// Dependencies:
+//   - DB: GORM database connection for user persistence
+//   - Cfg: Application configuration for JWT settings
+//   - Log: Structured logger for security event logging
 type AuthHandler struct {
-	DB  *gorm.DB
-	Cfg *config.Config
-	Log *zap.Logger
+	DB  *gorm.DB       // Database connection for user operations
+	Cfg *config.Config // Configuration for JWT token generation
+	Log *zap.Logger    // Logger for authentication events
 }
 
+// registerRequest defines the JSON payload structure for user registration.
+//
+// Validation rules:
+//   - Email: Must be a valid email format (RFC 5322)
+//   - Password: Minimum 8 characters for security
 type registerRequest struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=8"`
+	Email    string `json:"email" binding:"required,email"`    // User's email address (unique identifier)
+	Password string `json:"password" binding:"required,min=8"` // Plain text password (hashed before storage)
 }
 
+// loginRequest defines the JSON payload structure for user authentication.
+//
+// Fields:
+//   - Email: User's registered email address
+//   - Password: Plain text password for verification
 type loginRequest struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required,email"` // User's email address
+	Password string `json:"password" binding:"required"`    // Plain text password for verification
 }
 
+// Register handles new user registration requests.
+//
+// This endpoint creates a new user account with email and password authentication.
+// The password is securely hashed using bcrypt before database storage.
+//
+// HTTP Method: POST
+// Endpoint: /api/v1/auth/register
+// Content-Type: application/json
+//
+// Request Body:
+//   {
+//     "email": "user@example.com",    // Valid email address (unique)
+//     "password": "securepass123"     // Minimum 8 characters
+//   }
+//
+// Response (201 Created):
+//   {
+//     "message": "User created successfully",
+//     "user_id": 123
+//   }
+//
+// Error Responses:
+//   - 400 Bad Request: Invalid email format or password too short
+//   - 409 Conflict: Email already exists
+//   - 500 Internal Server Error: Database or hashing failure
+//
+// Security features:
+//   - bcrypt password hashing with default cost (10)
+//   - Email uniqueness validation
+//   - Input validation and sanitization
+//   - Comprehensive security event logging
 func (h *AuthHandler) Register(c *gin.Context) {
 	h.Log.Info("Registration attempt started", zap.String("ip", c.ClientIP()))
 	
