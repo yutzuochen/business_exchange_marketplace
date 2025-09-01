@@ -53,7 +53,7 @@ func Load() (*Config, error) {
 	cfg.RedisDB = getEnvInt("REDIS_DB", 0)
 	cfg.RedisDefaultTTLSeconds = getEnvInt("REDIS_DEFAULT_TTL_SECONDS", 60)
 
-	cfg.JWTSecret = getEnv("JWT_SECRET", "changeme-super-secret")
+	cfg.JWTSecret = getEnv("JWT_SECRET", "your-local-jwt-secret")
 	cfg.JWTIssuer = getEnv("JWT_ISSUER", "trade_company")
 	cfg.JWTExpireMinutes = getEnvInt("JWT_EXPIRE_MINUTES", 60)
 

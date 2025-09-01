@@ -154,6 +154,7 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 		// Public endpoints
 		api.POST("/auth/register", authH.Register)
 		api.POST("/auth/login", authH.Login)
+		api.POST("/auth/logout", authH.Logout)
 		api.GET("/listings", listH.List)
 		api.GET("/listings/:id", listH.Get)
 		api.GET("/categories", listH.GetCategories)
@@ -165,6 +166,9 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 			Issuer: cfg.JWTIssuer,
 		}, log))
 		{
+			// Authentication
+			authd.GET("/auth/me", authH.Me)
+
 			// User management
 			authd.GET("/user/profile", userH.GetProfile)
 			authd.PUT("/user/profile", userH.UpdateProfile)
