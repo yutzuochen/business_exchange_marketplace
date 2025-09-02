@@ -148,6 +148,7 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 	userH := &handlers.UserHandler{DB: db}
 	favH := &handlers.FavoriteHandler{DB: db}
 	msgH := &handlers.MessageHandler{DB: db}
+	auctionProxyH := handlers.NewAuctionProxyHandler(cfg, log)
 
 	api := r.Group("/api/v1")
 	{
@@ -190,6 +191,16 @@ func NewRouter(cfg *config.Config, log *zap.Logger, db *gorm.DB, redisClient *re
 			authd.GET("/messages/:id", msgH.Get)
 			authd.POST("/messages", msgH.Create)
 			authd.PUT("/messages/:id/read", msgH.MarkAsRead)
+
+			// Auction proxy endpoints (forward to auction service)
+			authd.GET("/auctions", auctionProxyH.GetAuctions)
+			authd.GET("/auctions/:id", auctionProxyH.GetAuction)
+			authd.POST("/auctions", auctionProxyH.CreateAuction)
+			authd.POST("/auctions/:id/activate", auctionProxyH.ActivateAuction)
+			authd.POST("/auctions/:id/bids", auctionProxyH.PlaceBid)
+			authd.GET("/auctions/:id/my-bids", auctionProxyH.GetMyBids)
+			authd.GET("/auctions/:id/results", auctionProxyH.GetAuctionResults)
+			authd.GET("/auctions/:id/ws-url", auctionProxyH.WebSocketProxy)
 		}
 	}
 

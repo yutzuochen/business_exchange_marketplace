@@ -110,7 +110,7 @@ func Load() (*Config, error) {
 
 	cfg.JWTSecret = getEnv("JWT_SECRET", "your-local-jwt-secret")
 	cfg.JWTIssuer = getEnv("JWT_ISSUER", "trade_company")
-	cfg.JWTExpireMinutes = getEnvInt("JWT_EXPIRE_MINUTES", 60)
+	cfg.JWTExpireMinutes = getEnvInt("JWT_EXPIRE_MINUTES", 10080) // 7 days default
 
 	cfg.CORSAllowedOrigins = getEnv("CORS_ALLOWED_ORIGINS", "*")
 	cfg.CORSAllowedMethods = getEnv("CORS_ALLOWED_METHODS", "GET,POST,PUT,PATCH,DELETE,OPTIONS")
