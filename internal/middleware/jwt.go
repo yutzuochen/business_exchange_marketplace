@@ -37,7 +37,10 @@ func JWT(config JWTConfig, logger *zap.Logger) gin.HandlerFunc {
 		logger.Info("JWT middleware: All cookies received",
 			zap.String("request_id", requestID),
 			zap.String("ip", clientIP),
-			zap.String("cookie_header", cookieHeader))
+			zap.String("cookie_header", cookieHeader),
+			zap.String("user_agent", userAgent),
+			zap.String("path", c.Request.URL.Path),
+			zap.String("method", c.Request.Method))
 
 		// First, try to get token from cookie (preferred method)
 		if cookie, err := c.Cookie("authToken"); err == nil && cookie != "" {
